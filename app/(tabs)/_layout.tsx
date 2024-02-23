@@ -1,18 +1,32 @@
+import { AntDesign } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
 const TabLayout: React.FC = () => {
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          height: 65,
+        },
+        tabBarShowLabel: false,
+      }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          // tabBarStyle: { display: 'none' },
+
+          tabBarIcon: ({ focused, size }) => (
+            <AntDesign name="home" color={focused ? '#003D82' : 'grey'} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="profile"
         options={{
-          title: 'Tab Two',
+          tabBarIcon: ({ focused, size }) => (
+            <AntDesign name="user" color={focused ? '#003D82' : 'grey'} size={size} />
+          ),
         }}
       />
     </Tabs>
