@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 
 export default function CategoryScreen(): React.ReactNode {
@@ -16,7 +17,7 @@ export default function CategoryScreen(): React.ReactNode {
     {
       id: '3',
       name: 'Ferrari',
-      img: 'https://seeklogo.com/images/F/Ferrari_Emblem-logo-431E232AFD-seeklogo.com.png',
+      img: 'https://logos-world.net/wp-content/uploads/2020/07/Ferrari-Scuderia-Logo.png',
     },
     {
       id: '4',
@@ -48,7 +49,10 @@ export default function CategoryScreen(): React.ReactNode {
           justifyContent: 'center',
         }}>
         {brands.map((el) => (
-          <TouchableOpacity key={el.id} style={{ margin: 13 }}>
+          <TouchableOpacity
+            key={el.id}
+            style={{ margin: 13 }}
+            onPress={() => router.push('/allcars/')}>
             <View
               key={el.id}
               style={{

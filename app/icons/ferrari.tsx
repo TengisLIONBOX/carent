@@ -2,7 +2,7 @@ import Svg, { Path } from 'react-native-svg';
 
 export const Ferrari = (): React.ReactNode => {
   return (
-    <Svg width={2500} height={2500} viewBox="0 0 192.756 192.756">
+    <Svg width={35} height={35} viewBox="0 0 192.756 192.756">
       <Path fill="#fff" d="M0 0h192.756v192.756H0V0z" />
       <Path
         fill="#fff"

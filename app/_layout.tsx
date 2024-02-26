@@ -1,5 +1,5 @@
-import { StatusBar } from 'react-native';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'react-native';
 
 const RootLayoutNav: React.FC = () => {
   return (
@@ -14,6 +14,22 @@ const RootLayoutNav: React.FC = () => {
             headerShown: true,
             headerTransparent: true,
             // headerTintColor: '#fff',
+          }}
+        />
+        <Stack.Screen
+          name="allcars/index"
+          options={{
+            headerTitle: '',
+            headerShown: true,
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="carinfo/index"
+          options={{
+            headerTitle: '',
+            headerShown: true,
+            headerTransparent: true,
           }}
         />
       </Stack>

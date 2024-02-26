@@ -1,3 +1,4 @@
+import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -34,7 +35,13 @@ export default function TabTwoScreen(): React.ReactNode {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text style={{ color: 'white', fontSize: 20, fontWeight: '500' }}>Name: Bataa</Text>
+          <Text style={{ color: 'white', fontSize: 20, fontWeight: '500', marginLeft: 17 }}>
+            Name: Bataa
+            <TouchableOpacity>
+              <AntDesign name="edit" size={20} color="white" />
+            </TouchableOpacity>
+          </Text>
+
           <Text style={{ color: 'white', fontSize: 20, fontWeight: '500' }}>id: PIKI12897</Text>
         </LinearGradient>
       </View>
