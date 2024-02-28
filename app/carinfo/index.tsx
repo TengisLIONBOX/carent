@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-virtualized-view';
 
@@ -94,12 +95,20 @@ export default function CarInfoScreen(): React.ReactNode {
             </View>
           </View>
         </View>
-        {/* <View
+
+        <TouchableOpacity onPress={() => router.push('/map/')}>
+          <View
             style={{
-              flex: 1,
-              alignItems: 'center',
+              width: 60,
+              height: 60,
+              backgroundColor: '#C3E54B',
+              borderRadius: 13,
               justifyContent: 'center',
-            }}></View> */}
+              alignItems: 'center',
+            }}>
+            <MaterialCommunityIcons name="map-marker-outline" size={32} color="black" />
+          </View>
+        </TouchableOpacity>
       </ScrollView>
       <View
         style={{
@@ -116,7 +125,7 @@ export default function CarInfoScreen(): React.ReactNode {
           <Text style={{ fontSize: 13, fontWeight: '500', color: '#868686' }}>Total Price</Text>
           <Text style={{ fontSize: 21, fontWeight: '700', color: '#003D82' }}>$90</Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/checkout/')}>
           <View
             style={{
               width: 130,

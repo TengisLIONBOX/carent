@@ -32,6 +32,22 @@ const RootLayoutNav: React.FC = () => {
             headerTransparent: true,
           }}
         />
+        <Stack.Screen
+          name="map/index"
+          options={{
+            headerTitle: '',
+            headerShown: true,
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="checkout/index"
+          options={{
+            headerTitle: '',
+            headerShown: true,
+            headerTransparent: true,
+          }}
+        />
       </Stack>
     </>
   );

@@ -40,9 +40,6 @@ export default function AllcarsScreen(): React.ReactNode {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 50 }}>
-          {/* <Text style={{ fontSize: 32, fontWeight: 'bold', width: 300, marginBottom: 40 }}>
-            Which brand of car you prefer?
-          </Text> */}
           <View
             style={{
               flex: 1,
