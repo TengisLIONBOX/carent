@@ -1,13 +1,14 @@
 import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function TabTwoScreen(): React.ReactNode {
   return (
     <View style={styles.container}>
       <View style={{ alignItems: 'flex-end', marginRight: 40, marginBottom: 7 }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/login/')}>
           <View
             style={{
               width: 80,

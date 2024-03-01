@@ -1,4 +1,4 @@
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Octicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'react-native';
 
@@ -19,8 +19,16 @@ const TabLayout: React.FC = () => {
           options={{
             // tabBarStyle: { display: 'none' },
 
+            tabBarIcon: ({ focused }) => (
+              <AntDesign name="home" color={focused ? '#003D82' : 'grey'} size={28} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="admin"
+          options={{
             tabBarIcon: ({ focused, size }) => (
-              <AntDesign name="home" color={focused ? '#003D82' : 'grey'} size={size} />
+              <Octicons name="diff-added" color={focused ? '#003D82' : 'grey'} size={30} />
             ),
           }}
         />
@@ -28,7 +36,7 @@ const TabLayout: React.FC = () => {
           name="profile"
           options={{
             tabBarIcon: ({ focused, size }) => (
-              <AntDesign name="user" color={focused ? '#003D82' : 'grey'} size={size} />
+              <AntDesign name="user" color={focused ? '#003D82' : 'grey'} size={28} />
             ),
           }}
         />

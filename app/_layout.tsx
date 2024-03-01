@@ -48,6 +48,32 @@ const RootLayoutNav: React.FC = () => {
             headerTransparent: true,
           }}
         />
+        <Stack.Screen
+          name="login/index"
+          options={{
+            headerTitle: '',
+            headerShown: false,
+            headerTransparent: true,
+            headerTintColor: '#fff',
+          }}
+        />
+        <Stack.Screen
+          name="signup/index"
+          options={{
+            headerTitle: '',
+            headerShown: true,
+            headerTransparent: true,
+            headerTintColor: '#fff',
+          }}
+        />
+        <Stack.Screen
+          name="createpost/index"
+          options={{
+            headerTitle: '',
+            headerShown: true,
+            headerTransparent: true,
+          }}
+        />
       </Stack>
     </>
   );
