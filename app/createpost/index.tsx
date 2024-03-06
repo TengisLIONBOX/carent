@@ -14,7 +14,7 @@ import {
   Image,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { ScrollView } from 'react-native-virtualized-view';
+// import { ScrollView } from 'react-native-virtualized-view';
 
 export default function CreatepostScreen(): React.ReactNode {
   const [open, setOpen] = useState(false);
@@ -55,7 +55,8 @@ export default function CreatepostScreen(): React.ReactNode {
     { label: 'Auto', value: 'auto' },
   ]);
 
-  const [image, setImage] = useState<ImagePicker.ImagePickerAsset | undefined>();
+  const [image1, setImage1] = useState<ImagePicker.ImagePickerAsset | undefined>();
+  const [image2, setImage2] = useState<ImagePicker.ImagePickerAsset | undefined>();
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
 
   if (!status || !status.granted) {
@@ -68,7 +69,7 @@ export default function CreatepostScreen(): React.ReactNode {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const pickImage = async () => {
+  const pickImage1 = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -77,13 +78,26 @@ export default function CreatepostScreen(): React.ReactNode {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0]);
+      setImage1(result.assets[0]);
     }
   };
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const pickImage2 = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 1,
+    });
 
+    if (!result.canceled) {
+      setImage2(result.assets[0]);
+    }
+  };
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {/* <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}> */}
+      <View>
         <Text
           style={{
             color: '#003D82',
@@ -91,6 +105,7 @@ export default function CreatepostScreen(): React.ReactNode {
             fontWeight: '500',
             paddingBottom: 35,
             paddingTop: 15,
+            paddingLeft: 45,
           }}>
           ADD CAR
         </Text>
@@ -264,7 +279,7 @@ export default function CreatepostScreen(): React.ReactNode {
               />
             </View>
           </SafeAreaView>
-          <TouchableOpacity onPress={pickImage}>
+          <TouchableOpacity onPress={pickImage1}>
             <Text style={styles.text1}>Front Car</Text>
             <View
               style={{
@@ -276,8 +291,30 @@ export default function CreatepostScreen(): React.ReactNode {
                 alignItems: 'center',
                 marginTop: 10,
               }}>
-              {image ? (
-                <Image source={{ uri: image.uri }} style={{ width: 160, height: 90 }} />
+              {image1 ? (
+                <Image source={{ uri: image1.uri }} style={{ width: 200, height: 120 }} />
+              ) : (
+                <>
+                  <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
+                  <Text style={{ color: '#767676' }}>Add your photos here</Text>
+                </>
+              )}
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={pickImage2}>
+            <Text style={styles.text1}>Back Car</Text>
+            <View
+              style={{
+                width: 300,
+                height: 130,
+                backgroundColor: '#ECECEC',
+                borderRadius: 15,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 10,
+              }}>
+              {image2 ? (
+                <Image source={{ uri: image2.uri }} style={{ width: 200, height: 120 }} />
               ) : (
                 <>
                   <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
@@ -302,7 +339,8 @@ export default function CreatepostScreen(): React.ReactNode {
             </View>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
+      {/* </ScrollView> */}
     </View>
   );
 }
