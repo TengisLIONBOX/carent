@@ -43,7 +43,7 @@ export default function CarInfoScreen(): React.ReactNode {
           </View>
         </View>
         <View style={{ paddingHorizontal: 20, marginTop: 10 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 5 }}>Descriptions</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 5 }}>Description</Text>
           <Text style={{ fontSize: 15 }}>sdhsasvcgdvhshdvchsk</Text>
         </View>
 
@@ -60,7 +60,7 @@ export default function CarInfoScreen(): React.ReactNode {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
             <View style={styles.icon}>
-              <MaterialCommunityIcons name="bluetooth" size={30} color="black" />
+              <MaterialCommunityIcons name="seat" size={30} color="black" />
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Seats</Text>
@@ -69,7 +69,7 @@ export default function CarInfoScreen(): React.ReactNode {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
             <View style={styles.icon}>
-              <MaterialCommunityIcons name="bluetooth" size={30} color="black" />
+              <MaterialCommunityIcons name="invert-colors" size={30} color="black" />
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Car Color</Text>
@@ -78,7 +78,7 @@ export default function CarInfoScreen(): React.ReactNode {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
             <View style={styles.icon}>
-              <MaterialCommunityIcons name="bluetooth" size={30} color="black" />
+              <MaterialCommunityIcons name="car" size={30} color="black" />
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Car Brand</Text>
@@ -87,25 +87,29 @@ export default function CarInfoScreen(): React.ReactNode {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
             <View style={styles.icon}>
-              <MaterialCommunityIcons name="bluetooth" size={30} color="black" />
+              <MaterialCommunityIcons name="road" size={30} color="black" />
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
-              <Text style={styles.features_text}>Car Brand</Text>
-              <Text style={styles.features_text2}>Ferrari</Text>
+              <Text style={styles.features_text}>Kilometers</Text>
+              <Text style={styles.features_text2}>2000</Text>
             </View>
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => router.push('/map/')}>
+        <TouchableOpacity
+          onPress={() => router.push('/map/')}
+          style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
           <View
             style={{
-              width: 60,
+              width: 150,
               height: 60,
               backgroundColor: '#C3E54B',
               borderRadius: 13,
               justifyContent: 'center',
               alignItems: 'center',
+              flexDirection: 'row',
             }}>
+            <Text style={{ fontWeight: '600' }}>See Location</Text>
             <MaterialCommunityIcons name="map-marker-outline" size={32} color="black" />
           </View>
         </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 // import React, { useState } from 'react';
@@ -102,8 +102,32 @@ export default function TabOneScreen(): React.ReactNode {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <SafeAreaView style={styles.header}>
-          <Text style={styles.headerText}>Hello Bataa 👋</Text>
-          <Text style={styles.subHeaderText}>Let's find your favorite car here!</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              paddingHorizontal: 22,
+            }}>
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={styles.headerText}>Hello Bataa 👋</Text>
+              <Text style={styles.subHeaderText}>Let's find your favorite car here!</Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push('/map/')} style={{ flexDirection: 'row' }}>
+              <View
+                style={{
+                  width: 50,
+                  height: 50,
+                  backgroundColor: '#C3E54B',
+                  borderRadius: 13,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <MaterialCommunityIcons name="map-marker-outline" size={30} color="black" />
+              </View>
+            </TouchableOpacity>
+          </View>
+
           <View style={{ alignItems: 'center' }}>
             <View style={styles.searchContainer}>
               <TextInput
@@ -200,17 +224,15 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 30,
     fontWeight: 'bold',
-    paddingLeft: '7%',
   },
   subHeaderText: {
     fontSize: 14,
     fontWeight: '400',
-    paddingLeft: '7%',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingTop: 23,
     gap: 7,
   },
   input: {
@@ -218,6 +240,7 @@ const styles = StyleSheet.create({
     height: 55,
     borderWidth: 1,
     borderRadius: 10,
+    paddingLeft: 10,
     backgroundColor: '#F8F8F8',
     borderColor: '#EAEAEA',
     color: 'black',
@@ -234,7 +257,7 @@ const styles = StyleSheet.create({
     padding: 7,
   },
   section: {
-    marginTop: 20,
+    marginTop: 15,
     paddingHorizontal: 20,
   },
   sectionHeader: {

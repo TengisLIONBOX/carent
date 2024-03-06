@@ -25,7 +25,7 @@ export default function TabTwoScreen(): React.ReactNode {
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <LinearGradient
-          colors={['#4B76EA', '#89A7F1']}
+          colors={['#004899', '#4B76EA']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
