@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
@@ -13,64 +12,25 @@ import {
   Button,
   Image,
 } from 'react-native';
-// import DropDownPicker from 'react-native-dropdown-picker';
 import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-virtualized-view';
 
 export default function CreatepostScreen(): React.ReactNode {
-  // const [open, setOpen] = useState(false);
-  // const [brand, setBrand] = useState(null);
-  // const [items, setItems] = useState([
-  //   { label: 'Ferrari', value: 'ferrari' },
-  //   { label: 'Toyota', value: 'toyota' },
-  //   { label: 'Mercedes', value: 'mercedes' },
-  //   { label: 'BMW', value: 'bmw' },
-  //   { label: 'Geely', value: 'geely' },
-  //   { label: 'Lamborghini', value: 'lamborghini' },
-  // ]);
-  // const [open2, setOpen2] = useState(false);
-  // const [color, setColor] = useState(null);
-  // const [items2, setItems2] = useState([
-  //   { label: 'Black', value: 'black' },
-  //   { label: 'Blue', value: 'blue' },
-  //   { label: 'Red', value: 'red' },
-  //   { label: 'White', value: 'white' },
-  //   { label: 'Grey', value: 'grey' },
-  //   { label: 'Orange', value: 'orange' },
-  //   { label: 'Purple', value: 'purple' },
-  //   { label: 'Green', value: 'green' },
-  // ]);
-  // const [open3, setOpen3] = useState(false);
-  // const [fuel, setFuel] = useState(null);
-  // const [items3, setItems3] = useState([
-  //   { label: 'Electric', value: 'electric' },
-  //   { label: 'Gas', value: 'gas' },
-  //   { label: 'Hybrid', value: 'hybrid' },
-  //   { label: 'Diesel', value: 'diesel' },
-  //   { label: 'Petrol', value: 'petrol' },
-  // ]);
-  // const [open4, setOpen4] = useState(false);
-  // const [transmission, setTransmission] = useState(null);
-  // const [items4, setItems4] = useState([
-  //   { label: 'Manual', value: 'manual' },
-  //   { label: 'Auto', value: 'auto' },
-  // ]);
-
   const [image1, setImage1] = useState<ImagePicker.ImagePickerAsset | undefined>();
   const [image2, setImage2] = useState<ImagePicker.ImagePickerAsset | undefined>();
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
 
-  if (!status || !status.granted) {
+  console.log({ status });
+  if (status !== null && !status.granted) {
     return (
       <View style={styles.container}>
         <Text>Give camera permission</Text>
-        <Button title="Enable camera" onPress={requestPermission} />
+        <Button title="Enable camera" onPress={() => requestPermission()} />
       </View>
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const pickImage1 = async () => {
+  const pickImage1 = async (): Promise<void> => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -82,8 +42,8 @@ export default function CreatepostScreen(): React.ReactNode {
       setImage1(result.assets[0]);
     }
   };
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const pickImage2 = async () => {
+
+  const pickImage2 = async (): Promise<void> => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -95,6 +55,7 @@ export default function CreatepostScreen(): React.ReactNode {
       setImage2(result.assets[0]);
     }
   };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
@@ -112,39 +73,6 @@ export default function CreatepostScreen(): React.ReactNode {
           </Text>
 
           <View style={{ gap: 20, justifyContent: 'center', alignItems: 'center' }}>
-            <View
-              style={{
-                borderWidth: 1,
-                borderRadius: 15,
-                borderColor: '#C7C7C7',
-              }}>
-              <RNPickerSelect
-                onValueChange={(value) => console.log(value)}
-                items={[
-                  { label: 'JavaScript', value: 'JavaScript' },
-                  { label: 'TypeScript', value: 'TypeScript' },
-                  { label: 'Python', value: 'Python' },
-                  { label: 'Java', value: 'Java' },
-                  { label: 'C++', value: 'C++' },
-                  { label: 'C', value: 'C' },
-                ]}
-                style={{
-                  inputAndroid: {
-                    width: 300,
-                    height: 50,
-                    fontSize: 16,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    // borderWidth: 2,
-                    // backgroundColor: 'grey',
-                    // borderRadius: 15,
-                    // borderColor: 'black',
-                    paddingRight: 30,
-                  },
-                }}
-              />
-            </View>
-
             <SafeAreaView>
               <View>
                 <Text style={styles.text1}>Your dealer name</Text>
@@ -208,21 +136,34 @@ export default function CreatepostScreen(): React.ReactNode {
             <SafeAreaView>
               <View>
                 <Text style={styles.text1}>Car brand</Text>
-                {/* <DropDownPicker
+                <View
                   style={{
-                    width: 300,
+                    borderWidth: 1,
                     borderRadius: 15,
-                    height: 60,
                     borderColor: '#C7C7C7',
-                    zIndex: 10,
-                  }}
-                  open={open}
-                  value={brand}
-                  items={items}
-                  setOpen={setOpen}
-                  setValue={setBrand}
-                  setItems={setItems}
-                /> */}
+                  }}>
+                  <RNPickerSelect
+                    onValueChange={(value) => console.log(value)}
+                    items={[
+                      { label: 'Ferrari', value: 'ferrari' },
+                      { label: 'Toyota', value: 'toyota' },
+                      { label: 'Mercedes', value: 'mercedes' },
+                      { label: 'BMW', value: 'bmw' },
+                      { label: 'Geely', value: 'geely' },
+                      { label: 'Lamborghini', value: 'lamborghini' },
+                    ]}
+                    style={{
+                      inputAndroid: {
+                        width: 300,
+                        height: 55,
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        paddingRight: 30,
+                      },
+                    }}
+                  />
+                </View>
               </View>
             </SafeAreaView>
             <SafeAreaView>
@@ -244,16 +185,36 @@ export default function CreatepostScreen(): React.ReactNode {
             <SafeAreaView>
               <View>
                 <Text style={styles.text1}>Car color</Text>
-                {/* <DropDownPicker
-                  dropDownDirection="TOP"
-                  style={{ width: 300, borderRadius: 15, height: 60, borderColor: '#C7C7C7' }}
-                  open={open2}
-                  value={color}
-                  items={items2}
-                  setOpen={setOpen2}
-                  setValue={setColor}
-                  setItems={setItems2}
-                /> */}
+                <View
+                  style={{
+                    borderWidth: 1,
+                    borderRadius: 15,
+                    borderColor: '#C7C7C7',
+                  }}>
+                  <RNPickerSelect
+                    onValueChange={(value) => console.log(value)}
+                    items={[
+                      { label: 'Black', value: 'black' },
+                      { label: 'Blue', value: 'blue' },
+                      { label: 'Red', value: 'red' },
+                      { label: 'White', value: 'white' },
+                      { label: 'Grey', value: 'grey' },
+                      { label: 'Orange', value: 'orange' },
+                      { label: 'Purple', value: 'purple' },
+                      { label: 'Green', value: 'green' },
+                    ]}
+                    style={{
+                      inputAndroid: {
+                        width: 300,
+                        height: 55,
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        paddingRight: 30,
+                      },
+                    }}
+                  />
+                </View>
               </View>
             </SafeAreaView>
             <SafeAreaView>
@@ -274,28 +235,62 @@ export default function CreatepostScreen(): React.ReactNode {
             <SafeAreaView>
               <View>
                 <Text style={styles.text1}>Transmission</Text>
-                {/* <DropDownPicker
-                  style={{ width: 300, borderRadius: 15, height: 60, borderColor: '#C7C7C7' }}
-                  open={open4}
-                  value={transmission}
-                  items={items4}
-                  setOpen={setOpen4}
-                  setValue={setTransmission}
-                  setItems={setItems4}
-                /> */}
+                <View
+                  style={{
+                    borderWidth: 1,
+                    borderRadius: 15,
+                    borderColor: '#C7C7C7',
+                  }}>
+                  <RNPickerSelect
+                    onValueChange={(value) => console.log(value)}
+                    items={[
+                      { label: 'Manual', value: 'manual' },
+                      { label: 'Automatic', value: 'automatic' },
+                    ]}
+                    style={{
+                      inputAndroid: {
+                        width: 300,
+                        height: 55,
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        paddingRight: 30,
+                      },
+                    }}
+                  />
+                </View>
               </View>
             </SafeAreaView>
             <SafeAreaView>
               <View>
                 <Text style={styles.text1}>Seats</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    style={styles.input}
-                    keyboardType="numeric"
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your car seat"
-                    placeholderTextColor="#C7C7C7"
+                <View
+                  style={{
+                    borderWidth: 1,
+                    borderRadius: 15,
+                    borderColor: '#C7C7C7',
+                  }}>
+                  <RNPickerSelect
+                    onValueChange={(value) => console.log(value)}
+                    items={[
+                      { label: '1', value: '1' },
+                      { label: '2', value: '2' },
+                      { label: '3', value: '3' },
+                      { label: '4', value: '4' },
+                      { label: '5', value: '5' },
+                      { label: '6', value: '6' },
+                      { label: '7', value: '7' },
+                    ]}
+                    style={{
+                      inputAndroid: {
+                        width: 300,
+                        height: 55,
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        paddingRight: 30,
+                      },
+                    }}
                   />
                 </View>
               </View>
@@ -303,6 +298,33 @@ export default function CreatepostScreen(): React.ReactNode {
             <SafeAreaView>
               <View>
                 <Text style={styles.text1}>Fuel</Text>
+                <View
+                  style={{
+                    borderWidth: 1,
+                    borderRadius: 15,
+                    borderColor: '#C7C7C7',
+                  }}>
+                  <RNPickerSelect
+                    onValueChange={(value) => console.log(value)}
+                    items={[
+                      { label: 'Electric', value: 'electric' },
+                      { label: 'Gas', value: 'gas' },
+                      { label: 'Hybrid', value: 'hybrid' },
+                      { label: 'Diesel', value: 'diesel' },
+                      { label: 'Petrol', value: 'petrol' },
+                    ]}
+                    style={{
+                      inputAndroid: {
+                        width: 300,
+                        height: 55,
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        paddingRight: 30,
+                      },
+                    }}
+                  />
+                </View>
               </View>
             </SafeAreaView>
             <TouchableOpacity onPress={pickImage1}>
@@ -360,6 +382,7 @@ export default function CreatepostScreen(): React.ReactNode {
                   justifyContent: 'center',
                   alignItems: 'center',
                   marginTop: 10,
+                  marginBottom: 10,
                 }}>
                 <Text style={{ color: 'white', fontWeight: '700' }}>Add Car</Text>
               </View>

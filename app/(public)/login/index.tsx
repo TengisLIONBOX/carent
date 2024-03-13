@@ -1,8 +1,8 @@
-// import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { useSignIn } from '@clerk/clerk-expo';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-// import { router } from 'expo-router';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,13 +12,51 @@ import {
   SafeAreaView,
   TextInput,
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function LoginScreen(): React.ReactNode {
+  const { signIn, setActive, isLoaded } = useSignIn();
+
+  const [emailAddress, setEmailAddress] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [seepass, setSeepass] = useState(true);
+  const [loading, setLoading] = useState(false);
   const image = {
     uri: 'https://cdn.pixabay.com/photo/2016/04/01/11/10/automobile-1300231_1280.png',
   };
+  const onSignInPress = async (): Promise<void> => {
+    if (!isLoaded) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const completeSignIn = await signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+
+      await setActive({ session: completeSignIn.createdSessionId });
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        console.error(err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const SeePass = (): void => {
+    return setSeepass(!seepass);
+  };
+  console.log('setActive:', setActive);
+  console.log('Signin:', signIn);
+  console.log('isLoaded:', isLoaded);
+
   return (
     <View style={styles.container}>
+      <Spinner visible={loading} />
       <Image
         source={image}
         resizeMode="cover"
@@ -40,8 +78,8 @@ export default function LoginScreen(): React.ReactNode {
             <View style={styles.searchContainer}>
               <TextInput
                 style={styles.input}
-                // value={param}
-                // onChangeText={setParam}
+                value={emailAddress}
+                onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
                 placeholder="EMAIL"
                 placeholderTextColor="#DDDDDD"
               />
@@ -52,16 +90,23 @@ export default function LoginScreen(): React.ReactNode {
           <View style={{ alignItems: 'center' }}>
             <View style={styles.searchContainer}>
               <TextInput
-                style={styles.input}
-                // value={param}
-                // onChangeText={setParam}
+                style={styles.passinput}
+                value={password}
+                onChangeText={(password) => setPassword(password)}
                 placeholder="PASSWORD"
                 placeholderTextColor="#DDDDDD"
+                secureTextEntry={seepass}
+              />
+              <MaterialCommunityIcons
+                name={seepass ? 'eye-off' : 'eye'}
+                size={30}
+                color="white"
+                onPress={SeePass}
               />
             </View>
           </View>
         </SafeAreaView>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onSignInPress}>
           <View
             style={{
               width: '100%',
@@ -106,9 +151,22 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: '#242843',
     borderColor: '#263259',
-    color: 'black',
+    color: 'white',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
+  },
+  passinput: {
+    width: 260,
+    height: 55,
+    borderWidth: 1,
+    borderRadius: 50,
+    backgroundColor: '#242843',
+    borderColor: '#263259',
+    color: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    marginRight: 10,
   },
 });

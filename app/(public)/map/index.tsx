@@ -12,7 +12,6 @@ export default function MapScreen(): React.ReactNode {
 
   useEffect(() => {
     Location.getCurrentPositionAsync({}).then((location) => {
-      // console.log("location", location);
       setLocation(location);
     });
   });
@@ -27,9 +26,6 @@ export default function MapScreen(): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={{ fontSize: 32, fontWeight: 'bold', width: 300, marginBottom: 40 }}>
-        Which brand of car you prefer?
-      </Text> */}
       {location !== null && (
         <MapView
           style={{ width: '100%', height: '100%' }}

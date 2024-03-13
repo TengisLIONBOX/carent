@@ -1,7 +1,7 @@
+import { useUser } from '@clerk/clerk-expo';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-// import React, { useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -22,7 +22,11 @@ import { Ferrari } from '../icons/ferrari';
 
 export default function TabOneScreen(): React.ReactNode {
   // const [param, setParam] = useState('');
+  const { isLoaded, isSignedIn, user } = useUser();
 
+  if (!isLoaded || !isSignedIn) {
+    return null;
+  }
   interface CarItem {
     id: string;
     img: React.ReactNode;
@@ -110,7 +114,7 @@ export default function TabOneScreen(): React.ReactNode {
               paddingHorizontal: 22,
             }}>
             <View style={{ flexDirection: 'column' }}>
-              <Text style={styles.headerText}>Hello Bataa 👋</Text>
+              <Text style={styles.headerText}>Hello {user.username} 👋</Text>
               <Text style={styles.subHeaderText}>Let's find your favorite car here!</Text>
             </View>
             <TouchableOpacity onPress={() => router.push('/map/')} style={{ flexDirection: 'row' }}>

@@ -1,7 +1,8 @@
-// import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { useSignUp } from '@clerk/clerk-expo';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
-// import { router } from 'expo-router';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,9 +14,47 @@ import {
 } from 'react-native';
 
 export default function SignUpScreen(): React.ReactNode {
+  const { isLoaded, signUp, setActive } = useSignUp();
+
+  const [username, setUsername] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
+  const [password, setPassword] = useState('');
+  const [seepass, setSeepass] = useState(true);
+
   const image = {
     uri: 'https://cdn.pixabay.com/photo/2016/04/01/11/10/automobile-1300231_1280.png',
   };
+
+  const onSignUpPress = async (): Promise<void> => {
+    if (!isLoaded) {
+      return;
+    }
+
+    try {
+      const completeSignUp = await signUp.create({
+        username,
+        emailAddress,
+        password,
+      });
+      await setActive({ session: completeSignUp.createdSessionId });
+
+      console.log(completeSignUp);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        if (err.message) {
+          alert(err.message);
+        } else {
+        }
+      } else {
+      }
+    } finally {
+    }
+  };
+
+  const SeePass = (): void => {
+    setSeepass(!seepass);
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -39,8 +78,8 @@ export default function SignUpScreen(): React.ReactNode {
             <View style={styles.searchContainer}>
               <TextInput
                 style={styles.input}
-                // value={param}
-                // onChangeText={setParam}
+                value={username}
+                onChangeText={(username) => setUsername(username)}
                 placeholder="USER NAME"
                 placeholderTextColor="#DDDDDD"
               />
@@ -52,8 +91,8 @@ export default function SignUpScreen(): React.ReactNode {
             <View style={styles.searchContainer}>
               <TextInput
                 style={styles.input}
-                // value={param}
-                // onChangeText={setParam}
+                value={emailAddress}
+                onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
                 placeholder="EMAIL"
                 placeholderTextColor="#DDDDDD"
               />
@@ -64,16 +103,24 @@ export default function SignUpScreen(): React.ReactNode {
           <View style={{ alignItems: 'center' }}>
             <View style={styles.searchContainer}>
               <TextInput
-                style={styles.input}
-                // value={param}
-                // onChangeText={setParam}
+                style={styles.passinput}
+                value={password}
+                onChangeText={(password) => setPassword(password)}
                 placeholder="PASSWORD"
                 placeholderTextColor="#DDDDDD"
+                secureTextEntry={seepass}
+              />
+              <MaterialCommunityIcons
+                name={seepass ? 'eye-off' : 'eye'}
+                size={30}
+                color="white"
+                onPress={SeePass}
               />
             </View>
           </View>
         </SafeAreaView>
-        <TouchableOpacity>
+
+        <TouchableOpacity onPress={onSignUpPress}>
           <View
             style={{
               width: '100%',
@@ -86,6 +133,11 @@ export default function SignUpScreen(): React.ReactNode {
             }}>
             <Text style={{ color: 'white', fontWeight: '700' }}>SIGNUP NOW</Text>
           </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => router.push('/login/')}>
+          <Text style={{ color: '#5F6486' }}>
+            Already have an account ?<Text style={{ color: '#D7D9E7' }}> Login</Text>
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -112,9 +164,22 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: '#242843',
     borderColor: '#263259',
-    color: 'black',
+    color: 'white',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
+  },
+  passinput: {
+    width: 260,
+    height: 55,
+    borderWidth: 1,
+    borderRadius: 50,
+    backgroundColor: '#242843',
+    borderColor: '#263259',
+    color: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    marginRight: 10,
   },
 });
