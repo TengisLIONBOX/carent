@@ -1,4 +1,4 @@
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 import { useState } from 'react';
 // import { router } from 'expo-router';
 import {
@@ -140,7 +140,6 @@ export default function CheckoutScreen(): React.ReactNode {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Constants.statusBarHeight + 40,
     flex: 1,
     // alignItems: 'center',
     // justifyContent: 'center',

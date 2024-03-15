@@ -1,4 +1,3 @@
-import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
 import { ScrollView } from 'react-native-virtualized-view';
@@ -86,7 +85,6 @@ export default function AllcarsScreen(): React.ReactNode {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Constants.statusBarHeight,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

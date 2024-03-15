@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import {
@@ -56,6 +56,8 @@ export default function CreatepostScreen(): React.ReactNode {
     }
   };
 
+  console.log(image1);
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
@@ -73,20 +75,6 @@ export default function CreatepostScreen(): React.ReactNode {
           </Text>
 
           <View style={{ gap: 20, justifyContent: 'center', alignItems: 'center' }}>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Your dealer name</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    style={styles.input}
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your dealer name"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
             <SafeAreaView>
               <View>
                 <Text style={styles.text1}>Phone Number</Text>
@@ -114,6 +102,37 @@ export default function CreatepostScreen(): React.ReactNode {
                     // value={param}
                     // onChangeText={setParam}
                     placeholder="Your address line"
+                    placeholderTextColor="#C7C7C7"
+                  />
+                </View>
+              </View>
+            </SafeAreaView>
+            <SafeAreaView>
+              <View>
+                <Text style={styles.text1}>Location latitude</Text>
+                <View style={styles.searchContainer}>
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    // value={param}
+                    // onChangeText={setParam}
+                    placeholder="Your phone number"
+                    placeholderTextColor="#C7C7C7"
+                  />
+                </View>
+              </View>
+            </SafeAreaView>
+
+            <SafeAreaView>
+              <View>
+                <Text style={styles.text1}>Location longitude</Text>
+                <View style={styles.searchContainer}>
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    // value={param}
+                    // onChangeText={setParam}
+                    placeholder="Your phone number"
                     placeholderTextColor="#C7C7C7"
                   />
                 </View>
@@ -396,7 +415,7 @@ export default function CreatepostScreen(): React.ReactNode {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Constants.statusBarHeight + 10,
+    // paddingTop: Constants.statusBarHeight + 10,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   TextInput,
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function SignUpScreen(): React.ReactNode {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -20,6 +21,7 @@ export default function SignUpScreen(): React.ReactNode {
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [seepass, setSeepass] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const image = {
     uri: 'https://cdn.pixabay.com/photo/2016/04/01/11/10/automobile-1300231_1280.png',
@@ -29,7 +31,7 @@ export default function SignUpScreen(): React.ReactNode {
     if (!isLoaded) {
       return;
     }
-
+    setLoading(true);
     try {
       const completeSignUp = await signUp.create({
         username,
@@ -48,6 +50,7 @@ export default function SignUpScreen(): React.ReactNode {
       } else {
       }
     } finally {
+      setLoading(false);
     }
   };
 
@@ -57,6 +60,7 @@ export default function SignUpScreen(): React.ReactNode {
 
   return (
     <View style={styles.container}>
+      <Spinner visible={loading} />
       <Image
         source={image}
         resizeMode="cover"

@@ -77,7 +77,7 @@ export default function CategoryScreen(): React.ReactNode {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Constants.statusBarHeight + 70,
+    paddingTop: Constants.statusBarHeight + 20,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

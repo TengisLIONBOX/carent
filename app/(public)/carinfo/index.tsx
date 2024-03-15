@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-virtualized-view';
@@ -49,15 +49,6 @@ export default function CarInfoScreen(): React.ReactNode {
 
         <View style={{ paddingHorizontal: 20, marginTop: 17 }}>
           <Text style={{ fontSize: 19, fontWeight: 'bold', marginBottom: 13 }}>Best Features</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 23 }}>
-            <View style={styles.icon}>
-              <MaterialCommunityIcons name="bluetooth" size={30} color="black" />
-            </View>
-            <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
-              <Text style={styles.features_text}>Bluetooth Connectivity</Text>
-              <Text style={styles.features_text2}>Yes</Text>
-            </View>
-          </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
             <View style={styles.icon}>
               <MaterialCommunityIcons name="seat" size={30} color="black" />
@@ -149,7 +140,7 @@ export default function CarInfoScreen(): React.ReactNode {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: Constants.statusBarHeight + 10,
+    // paddingTop: Constants.statusBarHeight,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

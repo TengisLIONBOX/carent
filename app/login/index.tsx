@@ -38,7 +38,11 @@ export default function LoginScreen(): React.ReactNode {
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err) {
       if (err instanceof Error) {
-        alert(err.message);
+        if (err.message === '') {
+          alert('This email hasnt registered!');
+        } else {
+          alert(err.message);
+        }
       } else {
         console.error(err);
       }
@@ -50,9 +54,9 @@ export default function LoginScreen(): React.ReactNode {
   const SeePass = (): void => {
     return setSeepass(!seepass);
   };
-  console.log('setActive:', setActive);
-  console.log('Signin:', signIn);
-  console.log('isLoaded:', isLoaded);
+  // console.log('setActive:', setActive);
+  // console.log('Signin:', signIn);
+  // console.log('isLoaded:', isLoaded);
 
   return (
     <View style={styles.container}>
