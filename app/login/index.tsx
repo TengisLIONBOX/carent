@@ -39,7 +39,7 @@ export default function LoginScreen(): React.ReactNode {
     } catch (err) {
       if (err instanceof Error) {
         if (err.message === '') {
-          alert('This email hasnt registered!');
+          alert('This email hasn`t been registered!');
         } else {
           alert(err.message);
         }

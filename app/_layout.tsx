@@ -1,3 +1,4 @@
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
@@ -24,6 +25,12 @@ const InitialLayout: React.FC = () => {
 };
 
 const RootLayoutNav: React.FC = () => {
+  const BASE_URL = 'http://192.168.11.68:3000/api/graphql';
+
+  const client = new ApolloClient({
+    uri: BASE_URL,
+    cache: new InMemoryCache(),
+  });
   const tokenCache = {
     async getToken(key: string) {
       try {
@@ -48,12 +55,15 @@ const RootLayoutNav: React.FC = () => {
       }
     },
   };
+
   return (
-    <ClerkProvider
-      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? ''}
-      tokenCache={tokenCache}>
-      <InitialLayout />
-    </ClerkProvider>
+    <ApolloProvider client={client}>
+      <ClerkProvider
+        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? ''}
+        tokenCache={tokenCache}>
+        <InitialLayout />
+      </ClerkProvider>
+    </ApolloProvider>
   );
 };
 

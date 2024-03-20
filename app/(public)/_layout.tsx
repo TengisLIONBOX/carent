@@ -26,7 +26,6 @@ const PublicLayout: React.FC = () => {
         }}>
         <AntDesign name="arrowleft" size={32} color="black" />
       </View>
-
       <Stack>
         <Stack.Screen
           name="category/index"
@@ -45,7 +44,7 @@ const PublicLayout: React.FC = () => {
           }}
         />
         <Stack.Screen
-          name="carinfo/index"
+          name="carinfo/[id]"
           options={{
             headerTitle: '',
             headerShown: false,
@@ -53,7 +52,7 @@ const PublicLayout: React.FC = () => {
           }}
         />
         <Stack.Screen
-          name="map/index"
+          name="map/[id]"
           options={{
             headerTitle: '',
             headerShown: true,
@@ -61,29 +60,14 @@ const PublicLayout: React.FC = () => {
           }}
         />
         <Stack.Screen
-          name="checkout/index"
+          name="checkout/[id]"
           options={{
             headerTitle: '',
             headerShown: false,
             headerTransparent: true,
           }}
         />
-        {/* <Stack.Screen
-          name="login/index"
-          options={{
-            headerTitle: '',
-            headerShown: false,
-            headerTransparent: true,
-          }}
-        />
-        <Stack.Screen
-          name="signup/index"
-          options={{
-            headerTitle: '',
-            headerShown: false,
-            headerTransparent: true,
-          }}
-        /> */}
+
         <Stack.Screen
           name="createpost/index"
           options={{

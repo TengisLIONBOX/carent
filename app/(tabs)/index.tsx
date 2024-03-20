@@ -1,3 +1,4 @@
+import { gql, useQuery } from '@apollo/client';
 import { useUser } from '@clerk/clerk-expo';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
@@ -12,6 +13,7 @@ import {
   View,
   Image,
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { ScrollView } from 'react-native-virtualized-view';
 
 import { Bmw } from '../icons/Bmw';
@@ -20,26 +22,29 @@ import { Tesla } from '../icons/Tesla';
 import { Bugatti } from '../icons/bugatti';
 import { Ferrari } from '../icons/ferrari';
 
+const GET_CAR_LIST = gql`
+  query getCarList {
+    getCarList {
+      id
+      name
+      price
+      frontimg
+    }
+  }
+`;
+
 export default function TabOneScreen(): React.ReactNode {
-  // const [param, setParam] = useState('');
   const { isLoaded, isSignedIn, user } = useUser();
+  const { data, loading, error } = useQuery(GET_CAR_LIST);
+  if (loading) return <Spinner visible={loading} />;
+  if (error) return <Text>{error.message}...</Text>;
+  // const [param, setParam] = useState('');
 
   if (!isLoaded || !isSignedIn) {
     return null;
   }
-  interface CarItem {
-    id: string;
-    img: React.ReactNode;
-    name: string;
-  }
-  interface CarItem2 {
-    id: string;
-    img: string;
-    name: string;
-    price: number;
-  }
 
-  const data: CarItem[] = [
+  const category = [
     {
       id: '1',
       name: 'Tesla',
@@ -67,41 +72,6 @@ export default function TabOneScreen(): React.ReactNode {
     },
   ];
 
-  const cardata: CarItem2[] = [
-    {
-      id: '1',
-      name: 'Tesla',
-      img: 'https://images.hgmsites.net/lrg/2017-tesla-model-s-p100d-awd-angular-front-exterior-view_100741523_l.jpg',
-      price: 50,
-    },
-    {
-      id: '2',
-      name: 'Mercedes',
-      img: 'https://www.mercedes-benz.co.in/content/india/en/passengercars/_jcr_content/root/responsivegrid/simple_teaser_115569/simple_teaser_item_c_193667439.component.damq2.3342710579709.jpg/E-Class%20banner_Mobile_1534x1151%20pixels-01.jpg',
-      price: 75,
-    },
-    {
-      id: '3',
-      name: 'Ferrari',
-      img: 'https://hips.hearstapps.com/hmg-prod/images/2024-ferrari-812-gts-101-64caae4038b21.jpeg?crop=0.526xw:0.701xh;0.137xw,0.299xh&resize=768:*',
-      price: 230,
-    },
-    {
-      id: '4',
-      name: 'BMW',
-      img: 'https://stimg.cardekho.com/images/carexteriorimages/930x620/BMW/X5-2023/10452/1688992642182/front-left-side-47.jpg',
-      price: 100,
-    },
-    {
-      id: '5',
-      name: 'Bugatti',
-      img: 'https://cdn.arstechnica.net/wp-content/uploads/2021/07/2021-Bugatti-Chiron-Pur-Sport-1.jpg',
-      price: 200,
-    },
-  ];
-
-  // console.log(param);
-
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -117,7 +87,9 @@ export default function TabOneScreen(): React.ReactNode {
               <Text style={styles.headerText}>Hello {user.username} 👋</Text>
               <Text style={styles.subHeaderText}>Let's find your favorite car here!</Text>
             </View>
-            <TouchableOpacity onPress={() => router.push('/map/')} style={{ flexDirection: 'row' }}>
+            <TouchableOpacity
+              onPress={() => router.push(`/map/${data.id}`)}
+              style={{ flexDirection: 'row' }}>
               <View
                 style={{
                   width: 50,
@@ -157,7 +129,7 @@ export default function TabOneScreen(): React.ReactNode {
           </View>
           <FlatList
             showsHorizontalScrollIndicator={false}
-            data={data}
+            data={category}
             renderItem={({ item }) => (
               <TouchableOpacity>
                 <View style={{ marginRight: 30, alignItems: 'center', gap: 5 }}>
@@ -180,16 +152,16 @@ export default function TabOneScreen(): React.ReactNode {
           </View>
           <View style={{ alignItems: 'center' }}>
             <FlatList
-              data={cardata}
+              data={data.getCarList}
               renderItem={({ item }) => (
                 <TouchableOpacity
+                  onPress={() => router.push(`/carinfo/${item.id}`)}
                   style={{
                     marginBottom: 20,
-                  }}
-                  onPress={() => router.push('/carinfo/')}>
+                  }}>
                   <View style={styles.item}>
                     <View style={{ alignItems: 'center' }}>
-                      <Image style={styles.image2} source={{ uri: item.img }} />
+                      <Image style={styles.image2} source={{ uri: item.frontimg }} />
                     </View>
                     <View style={{ padding: 10 }}>
                       <Text style={{ fontWeight: '600', fontSize: 15, marginLeft: 10 }}>

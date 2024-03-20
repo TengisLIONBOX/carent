@@ -1,23 +1,85 @@
+import { gql, useLazyQuery } from '@apollo/client';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-// import Constants from 'expo-constants';
-import { router } from 'expo-router';
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
+import { PageSlider } from '@pietile-native-kit/page-slider';
+import { router, useGlobalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { ScrollView } from 'react-native-virtualized-view';
+import Spinner from 'react-native-loading-spinner-overlay';
+
+const GET_CAR_BY_ID = gql`
+  query getCarById($id: ID!) {
+    getCarById(id: $id) {
+      id
+      name
+      price
+      fuel
+      color
+      engine
+      address
+      phone
+      description
+      transmission
+      seats
+      kilometers
+      latitude
+      longitude
+      frontimg
+      backimg
+      brand
+    }
+  }
+`;
 
 export default function CarInfoScreen(): React.ReactNode {
-  const image = {
-    uri: 'https://hips.hearstapps.com/hmg-prod/images/2024-ferrari-812-gts-101-64caae4038b21.jpeg?crop=0.526xw:0.701xh;0.137xw,0.299xh&resize=768:*',
-  };
+  const { id } = useGlobalSearchParams();
+  const [getCarById, { loading, error, data }] = useLazyQuery(GET_CAR_BY_ID);
+  const [selectedPage, setSelectedPage] = useState(0);
+
+  useEffect(() => {
+    getCarById({
+      variables: {
+        id,
+      },
+    });
+  }, [getCarById, id]);
+
+  if (loading) return <Spinner visible={loading} />;
+  if (error) return <Text>{error.message}</Text>;
+
+  const car = data?.getCarById;
+
+  if (car == null) {
+    return null;
+  }
+
+  console.log(car);
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 23, fontWeight: '500' }}>Ferrari</Text>
-          <ImageBackground
-            source={image}
-            resizeMode="cover"
-            style={{ width: 390, height: 200, marginTop: 10 }}
-          />
+          <Text style={{ fontSize: 23, fontWeight: '500' }}>{car.name}</Text>
+          <PageSlider
+            style={{ width: 380 }}
+            selectedPage={selectedPage}
+            onSelectedPageChange={setSelectedPage}
+            onCurrentPageChange={(page) => page}>
+            <View>
+              <ImageBackground
+                source={{ uri: car.frontimg }}
+                resizeMode="cover"
+                style={{ width: 390, height: 200, marginTop: 10 }}
+              />
+            </View>
+            <View>
+              <ImageBackground
+                source={{ uri: car.backimg }}
+                resizeMode="cover"
+                style={{ width: 390, height: 200, marginTop: 10 }}
+              />
+            </View>
+          </PageSlider>
         </View>
         <View
           style={{
@@ -29,22 +91,22 @@ export default function CarInfoScreen(): React.ReactNode {
           <View style={styles.spec}>
             <MaterialCommunityIcons name="engine-outline" size={32} color="black" />
             <Text style={styles.text1}>Engine</Text>
-            <Text style={styles.text2}>1600HP</Text>
+            <Text style={styles.text2}>{car.engine}</Text>
           </View>
           <View style={styles.spec}>
             <MaterialCommunityIcons name="car-shift-pattern" size={32} color="black" />
             <Text style={styles.text1}>Transmission</Text>
-            <Text style={styles.text2}>1600HP</Text>
+            <Text style={styles.text2}>{car.transmission}</Text>
           </View>
           <View style={styles.spec}>
             <MaterialCommunityIcons name="gas-station" size={32} color="black" />
             <Text style={styles.text1}>Fuel Type</Text>
-            <Text style={styles.text2}>1600HP</Text>
+            <Text style={styles.text2}>{car.fuel}</Text>
           </View>
         </View>
         <View style={{ paddingHorizontal: 20, marginTop: 10 }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 5 }}>Description</Text>
-          <Text style={{ fontSize: 15 }}>sdhsasvcgdvhshdvchsk</Text>
+          <Text style={{ fontSize: 15 }}>{car.description}</Text>
         </View>
 
         <View style={{ paddingHorizontal: 20, marginTop: 17 }}>
@@ -55,7 +117,7 @@ export default function CarInfoScreen(): React.ReactNode {
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Seats</Text>
-              <Text style={styles.features_text2}>4</Text>
+              <Text style={styles.features_text2}>{car.seats}</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
@@ -64,7 +126,7 @@ export default function CarInfoScreen(): React.ReactNode {
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Car Color</Text>
-              <Text style={styles.features_text2}>Red</Text>
+              <Text style={styles.features_text2}>{car.color}</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
@@ -73,7 +135,7 @@ export default function CarInfoScreen(): React.ReactNode {
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Car Brand</Text>
-              <Text style={styles.features_text2}>Ferrari</Text>
+              <Text style={styles.features_text2}>{car.brand}</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
@@ -82,13 +144,13 @@ export default function CarInfoScreen(): React.ReactNode {
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Kilometers</Text>
-              <Text style={styles.features_text2}>2000</Text>
+              <Text style={styles.features_text2}>{car.kilometers}</Text>
             </View>
           </View>
         </View>
 
         <TouchableOpacity
-          onPress={() => router.push('/map/')}
+          onPress={() => router.push(`/map/${id}`)}
           style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
           <View
             style={{
@@ -118,9 +180,9 @@ export default function CarInfoScreen(): React.ReactNode {
         }}>
         <View>
           <Text style={{ fontSize: 13, fontWeight: '500', color: '#868686' }}>Total Price</Text>
-          <Text style={{ fontSize: 21, fontWeight: '700', color: '#003D82' }}>$90</Text>
+          <Text style={{ fontSize: 21, fontWeight: '700', color: '#003D82' }}>${car.price}</Text>
         </View>
-        <TouchableOpacity onPress={() => router.push('/checkout/')}>
+        <TouchableOpacity onPress={() => router.push(`/checkout/${id}`)}>
           <View
             style={{
               width: 130,
