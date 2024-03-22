@@ -1,6 +1,8 @@
+import { gql, useMutation } from '@apollo/client';
+import { useUser } from '@clerk/clerk-expo';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-// import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
+import { Formik } from 'formik';
 import { useState } from 'react';
 import {
   StyleSheet,
@@ -15,10 +17,111 @@ import {
 import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-virtualized-view';
 
+const GET_CAR_LIST = gql`
+  query getCarList {
+    getCarList {
+      id
+    }
+  }
+`;
+const CREATE_CAR = gql`
+  mutation CreateCarMutation($input: CarCreateInput!) {
+    createCar(input: $input) {
+      id
+      name
+      price
+      fuel
+      color
+      engine
+      address
+      phone
+      description
+      transmission
+      seats
+      kilometers
+      latitude
+      longitude
+      frontimg
+      backimg
+      brand
+      renterId
+      rented
+    }
+  }
+`;
+
 export default function CreatepostScreen(): React.ReactNode {
   const [image1, setImage1] = useState<ImagePicker.ImagePickerAsset | undefined>();
   const [image2, setImage2] = useState<ImagePicker.ImagePickerAsset | undefined>();
+
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
+  const [createCar] = useMutation(CREATE_CAR, {
+    refetchQueries: [{ query: GET_CAR_LIST }],
+  });
+  const { isLoaded, isSignedIn, user } = useUser();
+  if (!isLoaded || !isSignedIn) {
+    return null;
+  }
+  const frontImgUrl = image1?.uri ?? '';
+  const backImgUrl = image2?.uri ?? '';
+  interface FormValues {
+    name: string;
+    address: string;
+    latitude: string;
+    longitude: string;
+    brand: string;
+    color: string;
+    kilometers: string;
+    transmission: string;
+    seats: string;
+    fuel: string;
+    engine: string;
+    description: string;
+    phone: string;
+    price: string;
+  }
+  const Submit = (values: FormValues) => {
+    const {
+      name,
+      address,
+      latitude,
+      longitude,
+      brand,
+      color,
+      kilometers,
+      transmission,
+      seats,
+      fuel,
+      engine,
+      description,
+      phone,
+      price,
+    } = values;
+    createCar({
+      variables: {
+        input: {
+          name: String(name),
+          address: String(address),
+          latitude: String(latitude),
+          longitude: String(longitude),
+          brand: String(brand),
+          color: String(color),
+          kilometers: Number(kilometers),
+          transmission: String(transmission),
+          seats: Number(seats),
+          fuel: String(fuel),
+          engine: Number(engine),
+          frontimg: frontImgUrl,
+          backimg: backImgUrl,
+          description: String(description),
+          phone: Number(phone),
+          price: Number(price),
+          renterId: String(user.id),
+          rented: false,
+        },
+      },
+    });
+  };
 
   console.log({ status });
   if (status !== null && !status.granted) {
@@ -56,8 +159,6 @@ export default function CreatepostScreen(): React.ReactNode {
     }
   };
 
-  console.log(image1);
-
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
@@ -73,340 +174,418 @@ export default function CreatepostScreen(): React.ReactNode {
             }}>
             ADD CAR
           </Text>
+          <Formik
+            onSubmit={(values) => {
+              Submit(values);
+            }}
+            initialValues={{
+              phone: '',
+              engine: '',
+              address: '',
+              latitude: '',
+              longitude: '',
+              description: '',
+              name: '',
+              brand: '',
+              color: '',
+              kilometers: '',
+              price: '',
+              transmission: '',
+              seats: '',
+              fuel: '',
+            }}>
+            {({ handleChange, handleBlur, handleSubmit, values, setFieldValue }) => (
+              <View style={{ gap: 20, justifyContent: 'center', alignItems: 'center' }}>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Phone Number</Text>
 
-          <View style={{ gap: 20, justifyContent: 'center', alignItems: 'center' }}>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Phone Number</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    style={styles.input}
-                    keyboardType="numeric"
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your phone number"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        onChangeText={handleChange('phone')}
+                        onBlur={handleBlur('phone')}
+                        value={values.phone}
+                        placeholder="Your phone number"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Engine</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        onChangeText={handleChange('engine')}
+                        onBlur={handleBlur('engine')}
+                        value={values.engine}
+                        placeholder="Your car engine"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
 
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Your address line</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    multiline
-                    numberOfLines={4}
-                    style={styles.biginput}
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your address line"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Location latitude</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    style={styles.input}
-                    keyboardType="numeric"
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your phone number"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Your address line</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        multiline
+                        numberOfLines={4}
+                        style={styles.biginput}
+                        onChangeText={handleChange('address')}
+                        onBlur={handleBlur('address')}
+                        value={values.address}
+                        placeholder="Your address line"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Location latitude</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        onChangeText={handleChange('latitude')}
+                        onBlur={handleBlur('latitude')}
+                        value={values.latitude}
+                        placeholder="Your location latitude"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
 
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Location longitude</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    style={styles.input}
-                    keyboardType="numeric"
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your phone number"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}> Car name</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    style={styles.input}
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your car name"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Car brand</Text>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    borderColor: '#C7C7C7',
-                  }}>
-                  <RNPickerSelect
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                      { label: 'Ferrari', value: 'ferrari' },
-                      { label: 'Toyota', value: 'toyota' },
-                      { label: 'Mercedes', value: 'mercedes' },
-                      { label: 'BMW', value: 'bmw' },
-                      { label: 'Geely', value: 'geely' },
-                      { label: 'Lamborghini', value: 'lamborghini' },
-                    ]}
-                    style={{
-                      inputAndroid: {
-                        width: 300,
-                        height: 55,
-                        fontSize: 16,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        paddingRight: 30,
-                      },
-                    }}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Car Description</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    multiline
-                    numberOfLines={4}
-                    style={styles.biginput}
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your car description"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Car color</Text>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    borderColor: '#C7C7C7',
-                  }}>
-                  <RNPickerSelect
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                      { label: 'Black', value: 'black' },
-                      { label: 'Blue', value: 'blue' },
-                      { label: 'Red', value: 'red' },
-                      { label: 'White', value: 'white' },
-                      { label: 'Grey', value: 'grey' },
-                      { label: 'Orange', value: 'orange' },
-                      { label: 'Purple', value: 'purple' },
-                      { label: 'Green', value: 'green' },
-                    ]}
-                    style={{
-                      inputAndroid: {
-                        width: 300,
-                        height: 55,
-                        fontSize: 16,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        paddingRight: 30,
-                      },
-                    }}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Kilometers</Text>
-                <View style={styles.searchContainer}>
-                  <TextInput
-                    style={styles.input}
-                    keyboardType="numeric"
-                    // value={param}
-                    // onChangeText={setParam}
-                    placeholder="Your kilometers"
-                    placeholderTextColor="#C7C7C7"
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Transmission</Text>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    borderColor: '#C7C7C7',
-                  }}>
-                  <RNPickerSelect
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                      { label: 'Manual', value: 'manual' },
-                      { label: 'Automatic', value: 'automatic' },
-                    ]}
-                    style={{
-                      inputAndroid: {
-                        width: 300,
-                        height: 55,
-                        fontSize: 16,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        paddingRight: 30,
-                      },
-                    }}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Seats</Text>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    borderColor: '#C7C7C7',
-                  }}>
-                  <RNPickerSelect
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                      { label: '1', value: '1' },
-                      { label: '2', value: '2' },
-                      { label: '3', value: '3' },
-                      { label: '4', value: '4' },
-                      { label: '5', value: '5' },
-                      { label: '6', value: '6' },
-                      { label: '7', value: '7' },
-                    ]}
-                    style={{
-                      inputAndroid: {
-                        width: 300,
-                        height: 55,
-                        fontSize: 16,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        paddingRight: 30,
-                      },
-                    }}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <SafeAreaView>
-              <View>
-                <Text style={styles.text1}>Fuel</Text>
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    borderColor: '#C7C7C7',
-                  }}>
-                  <RNPickerSelect
-                    onValueChange={(value) => console.log(value)}
-                    items={[
-                      { label: 'Electric', value: 'electric' },
-                      { label: 'Gas', value: 'gas' },
-                      { label: 'Hybrid', value: 'hybrid' },
-                      { label: 'Diesel', value: 'diesel' },
-                      { label: 'Petrol', value: 'petrol' },
-                    ]}
-                    style={{
-                      inputAndroid: {
-                        width: 300,
-                        height: 55,
-                        fontSize: 16,
-                        paddingHorizontal: 10,
-                        paddingVertical: 8,
-                        paddingRight: 30,
-                      },
-                    }}
-                  />
-                </View>
-              </View>
-            </SafeAreaView>
-            <TouchableOpacity onPress={pickImage1}>
-              <Text style={styles.text1}>Front Car</Text>
-              <View
-                style={{
-                  width: 300,
-                  height: 130,
-                  backgroundColor: '#ECECEC',
-                  borderRadius: 15,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: 10,
-                }}>
-                {image1 ? (
-                  <Image source={{ uri: image1.uri }} style={{ width: 200, height: 120 }} />
-                ) : (
-                  <>
-                    <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
-                    <Text style={{ color: '#767676' }}>Add your photos here</Text>
-                  </>
-                )}
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={pickImage2}>
-              <Text style={styles.text1}>Back Car</Text>
-              <View
-                style={{
-                  width: 300,
-                  height: 130,
-                  backgroundColor: '#ECECEC',
-                  borderRadius: 15,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: 10,
-                }}>
-                {image2 ? (
-                  <Image source={{ uri: image2.uri }} style={{ width: 200, height: 120 }} />
-                ) : (
-                  <>
-                    <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
-                    <Text style={{ color: '#767676' }}>Add your photos here</Text>
-                  </>
-                )}
-              </View>
-            </TouchableOpacity>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Location longitude</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        onChangeText={handleChange('longitude')}
+                        onBlur={handleBlur('longitude')}
+                        value={values.longitude}
+                        placeholder="Your location longitude"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}> Car name</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        style={styles.input}
+                        onChangeText={handleChange('name')}
+                        onBlur={handleBlur('name')}
+                        value={values.name}
+                        placeholder="Your car name"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Car brand</Text>
+                    <View
+                      style={{
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        borderColor: '#C7C7C7',
+                      }}>
+                      <RNPickerSelect
+                        onValueChange={(e) => {
+                          setFieldValue('brand', e);
+                        }}
+                        value={values.brand}
+                        items={[
+                          { label: 'Ferrari', value: 'ferrari' },
+                          { label: 'Toyota', value: 'toyota' },
+                          { label: 'Mercedes', value: 'mercedes' },
+                          { label: 'BMW', value: 'bmw' },
+                          { label: 'Geely', value: 'geely' },
+                          { label: 'Lamborghini', value: 'lamborghini' },
+                        ]}
+                        style={{
+                          inputAndroid: {
+                            width: 300,
+                            height: 55,
+                            fontSize: 16,
+                            paddingHorizontal: 10,
+                            paddingVertical: 8,
+                            paddingRight: 30,
+                          },
+                        }}
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Car Description</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        multiline
+                        numberOfLines={4}
+                        style={styles.biginput}
+                        onChangeText={handleChange('description')}
+                        onBlur={handleBlur('description')}
+                        value={values.description}
+                        placeholder="Your car description"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Car color</Text>
+                    <View
+                      style={{
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        borderColor: '#C7C7C7',
+                      }}>
+                      <RNPickerSelect
+                        onValueChange={(e) => {
+                          setFieldValue('color', e);
+                        }}
+                        value={values.color}
+                        items={[
+                          { label: 'Black', value: 'black' },
+                          { label: 'Blue', value: 'blue' },
+                          { label: 'Red', value: 'red' },
+                          { label: 'White', value: 'white' },
+                          { label: 'Grey', value: 'grey' },
+                          { label: 'Orange', value: 'orange' },
+                          { label: 'Purple', value: 'purple' },
+                          { label: 'Green', value: 'green' },
+                        ]}
+                        style={{
+                          inputAndroid: {
+                            width: 300,
+                            height: 55,
+                            fontSize: 16,
+                            paddingHorizontal: 10,
+                            paddingVertical: 8,
+                            paddingRight: 30,
+                          },
+                        }}
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Kilometers</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        onChangeText={handleChange('kilometers')}
+                        onBlur={handleBlur('kilometers')}
+                        value={values.kilometers}
+                        placeholder="Your kilometers"
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Transmission</Text>
+                    <View
+                      style={{
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        borderColor: '#C7C7C7',
+                      }}>
+                      <RNPickerSelect
+                        onValueChange={(e) => {
+                          setFieldValue('transmission', e);
+                        }}
+                        value={values.transmission}
+                        items={[
+                          { label: 'Manual', value: 'manual' },
+                          { label: 'Automatic', value: 'automatic' },
+                        ]}
+                        style={{
+                          inputAndroid: {
+                            width: 300,
+                            height: 55,
+                            fontSize: 16,
+                            paddingHorizontal: 10,
+                            paddingVertical: 8,
+                            paddingRight: 30,
+                          },
+                        }}
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Seats</Text>
+                    <View
+                      style={{
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        borderColor: '#C7C7C7',
+                      }}>
+                      <RNPickerSelect
+                        onValueChange={(e) => {
+                          setFieldValue('seats', e);
+                        }}
+                        value={values.seats}
+                        items={[
+                          { label: '1', value: '1' },
+                          { label: '2', value: '2' },
+                          { label: '3', value: '3' },
+                          { label: '4', value: '4' },
+                          { label: '5', value: '5' },
+                          { label: '6', value: '6' },
+                          { label: '7', value: '7' },
+                        ]}
+                        style={{
+                          inputAndroid: {
+                            width: 300,
+                            height: 55,
+                            fontSize: 16,
+                            paddingHorizontal: 10,
+                            paddingVertical: 8,
+                            paddingRight: 30,
+                          },
+                        }}
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
 
-            <TouchableOpacity>
-              <View
-                style={{
-                  width: 300,
-                  height: 62,
-                  backgroundColor: '#003D82',
-                  borderRadius: 15,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}>
-                <Text style={{ color: 'white', fontWeight: '700' }}>Add Car</Text>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>1 day rent price</Text>
+                    <View style={styles.searchContainer}>
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        onChangeText={handleChange('price')}
+                        onBlur={handleBlur('price')}
+                        value={values.price}
+                        placeholder=""
+                        placeholderTextColor="#C7C7C7"
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <SafeAreaView>
+                  <View>
+                    <Text style={styles.text1}>Fuel</Text>
+                    <View
+                      style={{
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        borderColor: '#C7C7C7',
+                      }}>
+                      <RNPickerSelect
+                        onValueChange={(e) => {
+                          setFieldValue('fuel', e);
+                        }}
+                        value={values.fuel}
+                        items={[
+                          { label: 'Electric', value: 'electric' },
+                          { label: 'Gas', value: 'gas' },
+                          { label: 'Hybrid', value: 'hybrid' },
+                          { label: 'Diesel', value: 'diesel' },
+                          { label: 'Petrol', value: 'petrol' },
+                        ]}
+                        style={{
+                          inputAndroid: {
+                            width: 300,
+                            height: 55,
+                            fontSize: 16,
+                            paddingHorizontal: 10,
+                            paddingVertical: 8,
+                            paddingRight: 30,
+                          },
+                        }}
+                      />
+                    </View>
+                  </View>
+                </SafeAreaView>
+                <TouchableOpacity onPress={pickImage1}>
+                  <Text style={styles.text1}>Front Car</Text>
+                  <View
+                    style={{
+                      width: 300,
+                      height: 130,
+                      backgroundColor: '#ECECEC',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: 10,
+                    }}>
+                    {image1 ? (
+                      <Image source={{ uri: image1.uri }} style={{ width: 200, height: 120 }} />
+                    ) : (
+                      <>
+                        <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
+                        <Text style={{ color: '#767676' }}>Add your photos here</Text>
+                      </>
+                    )}
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={pickImage2}>
+                  <Text style={styles.text1}>Back Car</Text>
+                  <View
+                    style={{
+                      width: 300,
+                      height: 130,
+                      backgroundColor: '#ECECEC',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: 10,
+                    }}>
+                    {image2 ? (
+                      <Image source={{ uri: image2.uri }} style={{ width: 200, height: 120 }} />
+                    ) : (
+                      <>
+                        <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
+                        <Text style={{ color: '#767676' }}>Add your photos here</Text>
+                      </>
+                    )}
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => handleSubmit()}>
+                  <View
+                    style={{
+                      width: 300,
+                      height: 62,
+                      backgroundColor: '#003D82',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: 10,
+                      marginBottom: 10,
+                    }}>
+                    <Text style={{ color: 'white', fontWeight: '700' }}>Add Car</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-          </View>
+            )}
+          </Formik>
         </View>
       </ScrollView>
     </View>
