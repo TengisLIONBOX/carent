@@ -1,7 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import { useUser } from '@clerk/clerk-expo';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 import { Formik } from 'formik';
 import { useState } from 'react';
 import {
@@ -53,7 +55,7 @@ const CREATE_CAR = gql`
 export default function CreatepostScreen(): React.ReactNode {
   const [image1, setImage1] = useState<ImagePicker.ImagePickerAsset | undefined>();
   const [image2, setImage2] = useState<ImagePicker.ImagePickerAsset | undefined>();
-
+  const [success, setSuccess] = useState(false);
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
   const [createCar] = useMutation(CREATE_CAR, {
     refetchQueries: [{ query: GET_CAR_LIST }],
@@ -62,6 +64,7 @@ export default function CreatepostScreen(): React.ReactNode {
   if (!isLoaded || !isSignedIn) {
     return null;
   }
+
   const frontImgUrl = image1?.uri ?? '';
   const backImgUrl = image2?.uri ?? '';
   interface FormValues {
@@ -97,6 +100,27 @@ export default function CreatepostScreen(): React.ReactNode {
       phone,
       price,
     } = values;
+
+    if (
+      !name ||
+      !address ||
+      !latitude ||
+      !longitude ||
+      !brand ||
+      !color ||
+      !kilometers ||
+      !transmission ||
+      !seats ||
+      !fuel ||
+      !engine ||
+      !description ||
+      !phone ||
+      !price
+    ) {
+      console.log('Please fill in all the required fields.');
+      return;
+    }
+
     createCar({
       variables: {
         input: {
@@ -121,9 +145,10 @@ export default function CreatepostScreen(): React.ReactNode {
         },
       },
     });
+
+    setSuccess(!success);
   };
 
-  console.log({ status });
   if (status !== null && !status.granted) {
     return (
       <View style={styles.container}>
@@ -159,8 +184,45 @@ export default function CreatepostScreen(): React.ReactNode {
     }
   };
 
+  const amjilttai = () => {
+    setSuccess(!success);
+    router.push('/');
+  };
   return (
     <View style={styles.container}>
+      {success ? (
+        <BlurView
+          intensity={50}
+          tint="dark"
+          style={{
+            width: '100%',
+            height: '110%',
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10,
+          }}>
+          <TouchableOpacity onPress={amjilttai}>
+            <View
+              style={{
+                width: 250,
+                height: 220,
+                backgroundColor: 'white',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 15,
+                padding: 10,
+              }}>
+              <FontAwesome name="check-circle" size={45} color="green" />
+              <Text style={{ fontWeight: '700', fontSize: 20, marginTop: 10 }}>
+                Successfully created
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </BlurView>
+      ) : (
+        <></>
+      )}
       <ScrollView showsVerticalScrollIndicator={false} style={{ width: '100%' }}>
         <View>
           <Text
@@ -175,9 +237,7 @@ export default function CreatepostScreen(): React.ReactNode {
             ADD CAR
           </Text>
           <Formik
-            onSubmit={(values) => {
-              Submit(values);
-            }}
+            onSubmit={(values) => Submit(values)}
             initialValues={{
               phone: '',
               engine: '',
@@ -194,7 +254,7 @@ export default function CreatepostScreen(): React.ReactNode {
               seats: '',
               fuel: '',
             }}>
-            {({ handleChange, handleBlur, handleSubmit, values, setFieldValue }) => (
+            {({ handleChange, handleBlur, values, setFieldValue }) => (
               <View style={{ gap: 20, justifyContent: 'center', alignItems: 'center' }}>
                 <SafeAreaView>
                   <View>
@@ -568,7 +628,7 @@ export default function CreatepostScreen(): React.ReactNode {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handleSubmit()}>
+                <TouchableOpacity onPress={() => Submit(values)}>
                   <View
                     style={{
                       width: 300,

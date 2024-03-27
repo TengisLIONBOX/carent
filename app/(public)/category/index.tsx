@@ -8,31 +8,37 @@ export default function CategoryScreen(): React.ReactNode {
       id: '1',
       name: 'Tesla',
       img: 'https://www.pngall.com/wp-content/uploads/11/Tesla-Logo-PNG-Photos.png',
+      brand: 'tesla',
     },
     {
       id: '2',
       name: 'Mercedes',
       img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/1024px-Mercedes-Logo.svg.png',
+      brand: 'mercedes',
     },
     {
       id: '3',
       name: 'Ferrari',
       img: 'https://logos-world.net/wp-content/uploads/2020/07/Ferrari-Scuderia-Logo.png',
+      brand: 'ferrari',
     },
     {
       id: '4',
-      name: 'Bugatti',
-      img: 'https://pngimg.com/d/bugatti_logo_PNG3.png',
+      name: 'Toyota',
+      img: 'https://cdn.iconscout.com/icon/free/png-256/free-toyota-7-827471.png?f=webp',
+      brand: 'toyota',
     },
     {
       id: '5',
       name: 'BMW',
       img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/2048px-BMW.svg.png',
+      brand: 'bmw',
     },
     {
       id: '6',
       name: 'Lamborghini',
       img: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/df/Lamborghini_Logo.svg/1200px-Lamborghini_Logo.svg.png',
+      brand: 'lamborghini',
     },
   ];
   return (
@@ -52,7 +58,7 @@ export default function CategoryScreen(): React.ReactNode {
           <TouchableOpacity
             key={el.id}
             style={{ margin: 13 }}
-            onPress={() => router.push('/allcars/')}>
+            onPress={() => router.push(`/brandcars/${el.brand}`)}>
             <View
               key={el.id}
               style={{

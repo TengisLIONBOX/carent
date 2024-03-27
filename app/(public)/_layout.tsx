@@ -51,11 +51,12 @@ const PublicLayout: React.FC = () => {
             headerTransparent: true,
           }}
         />
+
         <Stack.Screen
           name="map/[id]"
           options={{
             headerTitle: '',
-            headerShown: true,
+            headerShown: false,
             headerTransparent: true,
           }}
         />
@@ -70,6 +71,14 @@ const PublicLayout: React.FC = () => {
 
         <Stack.Screen
           name="createpost/index"
+          options={{
+            headerTitle: '',
+            headerShown: false,
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="brandcars/[brand]"
           options={{
             headerTitle: '',
             headerShown: false,

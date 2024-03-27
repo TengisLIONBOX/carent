@@ -1,18 +1,9 @@
-// import Constants from 'expo-constants';
-import { useState } from 'react';
-// import { router } from 'expo-router';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 
 export default function CheckoutScreen(): React.ReactNode {
-  const [number, onChangeNumber] = useState('1');
+  const [days, setDays] = useState('');
   return (
     <View style={styles.container}>
       <View style={{ padding: 20 }}>
@@ -20,7 +11,7 @@ export default function CheckoutScreen(): React.ReactNode {
           style={{
             fontSize: 27,
             fontWeight: '700',
-            marginBottom: 23,
+            marginBottom: 20,
           }}>
           Checkout
         </Text>
@@ -75,23 +66,39 @@ export default function CheckoutScreen(): React.ReactNode {
                 How many days are you gonna rent?
               </Text>
               <SafeAreaView>
-                <TextInput
+                <View
                   style={{
-                    width: 100,
-                    height: 50,
-                    borderWidth: 2,
+                    width: 200,
+                    borderWidth: 1,
                     borderRadius: 15,
-                    borderColor: '#C5C5C5',
-                    padding: 10,
-                  }}
-                  onChangeText={onChangeNumber}
-                  value={number}
-                  keyboardType="numeric"
-                />
+                    borderColor: '#C7C7C7',
+                  }}>
+                  <RNPickerSelect
+                    onValueChange={(e) => {
+                      setDays(e);
+                    }}
+                    value={days}
+                    items={[
+                      { label: '1', value: '1' },
+                      { label: '2', value: '2' },
+                      { label: '3', value: '3' },
+                      { label: '4', value: '4' },
+                      { label: '5', value: '5' },
+                      { label: '6', value: '6' },
+                    ]}
+                    style={{
+                      inputAndroid: {
+                        width: 200,
+                        height: 55,
+                        fontSize: 16,
+                      },
+                    }}
+                  />
+                </View>
               </SafeAreaView>
             </View>
           </View>
-          <View style={{ marginBottom: 13 }}>
+          <View style={{ marginBottom: 10 }}>
             <Text style={styles.textheader}>PRICE DETAILS</Text>
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
@@ -141,8 +148,6 @@ export default function CheckoutScreen(): React.ReactNode {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
     backgroundColor: 'white',
   },
   textheader: {

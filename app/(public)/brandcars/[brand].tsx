@@ -1,12 +1,24 @@
-import { gql, useQuery } from '@apollo/client';
-import { router } from 'expo-router';
+import { gql, useLazyQuery } from '@apollo/client';
+import { router, useGlobalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { ScrollView } from 'react-native-virtualized-view';
 
-const GET_CAR_LIST = gql`
-  query getCarList {
-    getCarList {
+interface Car {
+  id: string;
+  name: string;
+  price: number;
+  frontimg: string;
+}
+
+interface GetCarsByBrandData {
+  getCarsByBrand: Car[];
+}
+
+const GET_CARS_BY_BRAND = gql`
+  query getCarsByBrand($brand: String!) {
+    getCarsByBrand(brand: $brand) {
       id
       name
       price
@@ -15,30 +27,34 @@ const GET_CAR_LIST = gql`
   }
 `;
 
-export default function AllcarsScreen(): React.ReactNode {
-  const { data, loading, error } = useQuery(GET_CAR_LIST);
+export default function BrandCarsScreen(): JSX.Element {
+  const { brand } = useGlobalSearchParams();
+  const [getCarsByBrand, { data, loading, error }] =
+    useLazyQuery<GetCarsByBrandData>(GET_CARS_BY_BRAND);
 
-  if (loading) return <Spinner visible={loading} />;
+  useEffect(() => {
+    getCarsByBrand({
+      variables: {
+        brand,
+      },
+    });
+  }, [getCarsByBrand, brand]);
+
+  if (loading || !data) return <Spinner visible={loading} />;
   if (error) return <Text>{error.message}...</Text>;
+  console.log(brand);
 
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 50 }}>
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <FlatList
-              data={data.getCarList}
+              data={data?.getCarsByBrand ?? []}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => router.push(`/carinfo/${item.id}`)}
-                  style={{
-                    marginBottom: 20,
-                  }}>
+                  style={{ marginBottom: 20 }}>
                   <View style={styles.item}>
                     <View style={{ alignItems: 'center' }}>
                       <Image style={styles.image} source={{ uri: item.frontimg }} />
