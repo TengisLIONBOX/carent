@@ -85,6 +85,14 @@ const PublicLayout: React.FC = () => {
             headerTransparent: true,
           }}
         />
+        <Stack.Screen
+          name="managepost/index"
+          options={{
+            headerTitle: '',
+            headerShown: false,
+            headerTransparent: true,
+          }}
+        />
       </Stack>
     </View>
   );

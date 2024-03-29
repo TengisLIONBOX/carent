@@ -1,9 +1,52 @@
-import React, { useState } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
+import { useGlobalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
+import Loading from '../loading';
+
+const GET_CAR_BY_ID = gql`
+  query getCarById($id: ID!) {
+    getCarById(id: $id) {
+      id
+      name
+      price
+      address
+      phone
+      description
+      frontimg
+    }
+  }
+`;
 export default function CheckoutScreen(): React.ReactNode {
   const [days, setDays] = useState('');
+  const [totalprice, setTotal] = useState('');
+  const { id } = useGlobalSearchParams();
+  const [getCarById, { loading, error, data }] = useLazyQuery(GET_CAR_BY_ID);
+  console.log(id);
+
+  useEffect(() => {
+    getCarById({
+      variables: {
+        id,
+      },
+    });
+    const dayprice = Number(car?.price) * Number(days ?? 0);
+
+    setTotal(String(dayprice + 8));
+  }, [getCarById, id, days]);
+
+  if (loading) return <Loading />;
+  if (error) return <Text>{error.message}</Text>;
+
+  const car = data?.getCarById;
+
+  if (car == null) {
+    return null;
+  }
+  console.log(days);
+
   return (
     <View style={styles.container}>
       <View style={{ padding: 20 }}>
@@ -19,20 +62,18 @@ export default function CheckoutScreen(): React.ReactNode {
           <Text style={styles.textheader}>CAR DETAIL</Text>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 17 }}>
             <View>
-              <Text style={{ fontSize: 17, fontWeight: 'bold', marginBottom: 3 }}>
-                Ferrari model W
-              </Text>
+              <Text style={{ fontSize: 17, fontWeight: 'bold', marginBottom: 3 }}>{car.name}</Text>
               <Text style={{ fontSize: 17, fontWeight: '500', marginBottom: 3, color: '#0057AE' }}>
-                $77 / day
+                ${car.price} / day
               </Text>
               <Text style={{ fontSize: 16, fontWeight: '500', marginBottom: 3 }}>
-                Ulaanbaatar, Chingeltei
+                {car.description}
               </Text>
             </View>
             <Image
               style={{ width: 93, height: 93, borderRadius: 15 }}
               source={{
-                uri: 'https://hips.hearstapps.com/hmg-prod/images/2024-ferrari-812-gts-101-64caae4038b21.jpeg?crop=0.526xw:0.701xh;0.137xw,0.299xh&resize=768:*',
+                uri: `${car.frontimg}`,
               }}
             />
           </View>
@@ -46,7 +87,7 @@ export default function CheckoutScreen(): React.ReactNode {
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
               <Text style={styles.text1}>Address line</Text>
-              <Text style={styles.text2}>Ulaanbaatar, Mongolia</Text>
+              <Text style={styles.text2}>{car.address}</Text>
             </View>
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
@@ -56,7 +97,7 @@ export default function CheckoutScreen(): React.ReactNode {
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
               <Text style={styles.text1}>Phone number</Text>
-              <Text style={styles.text2}>99117788</Text>
+              <Text style={styles.text2}>{car.phone}</Text>
             </View>
           </View>
           <View style={{ marginBottom: 15 }}>
@@ -85,6 +126,9 @@ export default function CheckoutScreen(): React.ReactNode {
                       { label: '4', value: '4' },
                       { label: '5', value: '5' },
                       { label: '6', value: '6' },
+                      { label: '7', value: '7' },
+                      { label: '8', value: '8' },
+                      { label: '9', value: '9' },
                     ]}
                     style={{
                       inputAndroid: {
@@ -102,8 +146,8 @@ export default function CheckoutScreen(): React.ReactNode {
             <Text style={styles.textheader}>PRICE DETAILS</Text>
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
-              <Text style={styles.text1}>Trip price</Text>
-              <Text style={styles.text2}>$10</Text>
+              <Text style={styles.text1}>Renter price</Text>
+              <Text style={styles.text2}>${car.price}</Text>
             </View>
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
@@ -123,7 +167,7 @@ export default function CheckoutScreen(): React.ReactNode {
                 marginTop: 10,
               }}>
               <Text style={{ fontSize: 18, fontWeight: '600' }}>Total</Text>
-              <Text style={{ fontSize: 18, fontWeight: '600' }}>$18</Text>
+              <Text style={{ fontSize: 18, fontWeight: '600' }}>${totalprice}</Text>
             </View>
           </View>
           <TouchableOpacity>

@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { useUser } from '@clerk/clerk-expo';
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import {
@@ -35,6 +35,7 @@ const GET_CAR_LIST = gql`
 
 export default function TabOneScreen(): React.ReactNode {
   const { isLoaded, isSignedIn, user } = useUser();
+
   const { data, loading, error } = useQuery(GET_CAR_LIST);
   if (loading) return <Spinner visible={loading} />;
   if (error) return <Text>{error.message}...</Text>;
@@ -87,21 +88,6 @@ export default function TabOneScreen(): React.ReactNode {
               <Text style={styles.headerText}>Hello {user.username} 👋</Text>
               <Text style={styles.subHeaderText}>Let's find your favorite car here!</Text>
             </View>
-            <TouchableOpacity
-              onPress={() => router.push(`/map/${data.id}`)}
-              style={{ flexDirection: 'row' }}>
-              <View
-                style={{
-                  width: 50,
-                  height: 50,
-                  backgroundColor: '#C3E54B',
-                  borderRadius: 13,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <MaterialCommunityIcons name="map-marker-outline" size={30} color="black" />
-              </View>
-            </TouchableOpacity>
           </View>
 
           <View style={{ alignItems: 'center' }}>

@@ -1,8 +1,9 @@
 import { gql, useQuery } from '@apollo/client';
 import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
-import Spinner from 'react-native-loading-spinner-overlay';
 import { ScrollView } from 'react-native-virtualized-view';
+
+import LoaderSkeleton2 from '../loading2';
 
 const GET_CAR_LIST = gql`
   query getCarList {
@@ -18,7 +19,7 @@ const GET_CAR_LIST = gql`
 export default function AllcarsScreen(): React.ReactNode {
   const { data, loading, error } = useQuery(GET_CAR_LIST);
 
-  if (loading) return <Spinner visible={loading} />;
+  if (loading) return <LoaderSkeleton2 />;
   if (error) return <Text>{error.message}...</Text>;
 
   return (

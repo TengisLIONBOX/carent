@@ -77,22 +77,6 @@ export default function LoaderSkeleton() {
             </View>
           </View>
         </View>
-
-        <TouchableOpacity style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
-          <View
-            style={{
-              width: 150,
-              height: 60,
-              backgroundColor: '#C3E54B',
-              borderRadius: 13,
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'row',
-            }}>
-            <Text style={{ fontWeight: '600' }}>See Location</Text>
-            <MaterialCommunityIcons name="map-marker-outline" size={32} color="black" />
-          </View>
-        </TouchableOpacity>
       </ScrollView>
       <View
         style={{

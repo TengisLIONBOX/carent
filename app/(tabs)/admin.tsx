@@ -7,7 +7,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 export default function AdminScreen(): React.ReactNode {
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.push('/allcars/')}>
+      <TouchableOpacity onPress={() => router.push('/managepost/')}>
         <LinearGradient
           colors={['#4B76EA', '#89A7F1']}
           start={{ x: 0, y: 0 }}

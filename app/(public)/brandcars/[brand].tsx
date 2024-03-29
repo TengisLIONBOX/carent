@@ -2,8 +2,9 @@ import { gql, useLazyQuery } from '@apollo/client';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
-import Spinner from 'react-native-loading-spinner-overlay';
 import { ScrollView } from 'react-native-virtualized-view';
+
+import LoaderSkeleton2 from '../loading2';
 
 interface Car {
   id: string;
@@ -40,7 +41,12 @@ export default function BrandCarsScreen(): JSX.Element {
     });
   }, [getCarsByBrand, brand]);
 
-  if (loading || !data) return <Spinner visible={loading} />;
+  if (loading || !data)
+    return (
+      <View style={{ marginTop: 20 }}>
+        <LoaderSkeleton2 />
+      </View>
+    );
   if (error) return <Text>{error.message}...</Text>;
   console.log(brand);
 
