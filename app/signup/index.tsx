@@ -42,6 +42,9 @@ export default function SignUpScreen(): React.ReactNode {
 
       console.log(completeSignUp);
     } catch (err: unknown) {
+      alert(
+        'The password should be a minimum of 8 characters long and include at least one uppercase letter, and number. ',
+      );
       if (err instanceof Error) {
         if (err.message) {
           alert(err.message);

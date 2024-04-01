@@ -2,9 +2,8 @@ import { gql, useLazyQuery } from '@apollo/client';
 import { useGlobalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import RNPickerSelect from 'react-native-picker-select';
-
-import Loading from '../loading';
 
 const GET_CAR_BY_ID = gql`
   query getCarById($id: ID!) {
@@ -16,36 +15,78 @@ const GET_CAR_BY_ID = gql`
       phone
       description
       frontimg
+      renterId
     }
   }
 `;
+
+const GET_USER_BY_ID = gql`
+  query GetUserById($id: String) {
+    getUserById(id: $id) {
+      id
+      username
+    }
+  }
+`;
+
+interface Car {
+  id: string;
+  name: string;
+  price: number;
+  address: string;
+  phone: string;
+  description: string;
+  frontimg: string;
+  renterId: string;
+}
+
+interface User {
+  id: string;
+  username: string;
+}
+
 export default function CheckoutScreen(): React.ReactNode {
   const [days, setDays] = useState('');
   const [totalprice, setTotal] = useState('');
   const { id } = useGlobalSearchParams();
-  const [getCarById, { loading, error, data }] = useLazyQuery(GET_CAR_BY_ID);
-  console.log(id);
+  const [getCarById, { loading: carLoading, error, data: carData }] = useLazyQuery(GET_CAR_BY_ID);
+  const [getUserById, { loading: userLoading, data: userData }] = useLazyQuery(GET_USER_BY_ID);
+  const [car, setCar] = useState<Car | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    getCarById({
-      variables: {
-        id,
-      },
-    });
-    const dayprice = Number(car?.price) * Number(days ?? 0);
+    getCarById({ variables: { id } });
+  }, [id]);
+  useEffect(() => {
+    if (car !== null) {
+      // console.log('Calling get User by id ', car.renterId);
+      getUserById({ variables: { id: car.renterId } });
+    }
+  }, [car]);
 
-    setTotal(String(dayprice + 8));
-  }, [getCarById, id, days]);
+  useEffect(() => {
+    if (carData !== undefined) {
+      setCar(carData.getCarById);
+    }
+  }, [carData]);
 
-  if (loading) return <Loading />;
-  if (error) return <Text>{error.message}</Text>;
+  useEffect(() => {
+    // console.log(JSON.stringify({ userData }, null, 2));
+    if (userData !== undefined) {
+      setUser(userData.getUserById);
+    }
+  }, [userData]);
 
-  const car = data?.getCarById;
+  useEffect(() => {
+    if (car !== null) {
+      const dayprice = Number(car.price) * Number(days);
+      setTotal(String(dayprice + 8));
+    }
+  }, [car, days]);
+  console.log(JSON.stringify({ car, user }, null, 2));
 
-  if (car == null) {
-    return null;
-  }
-  console.log(days);
+  if (car === null || user === null || carLoading || userLoading) return <Spinner visible />;
+  if (error) return <Text>{error?.message}</Text>;
 
   return (
     <View style={styles.container}>
@@ -82,17 +123,12 @@ export default function CheckoutScreen(): React.ReactNode {
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
               <Text style={styles.text1}>Full name</Text>
-              <Text style={styles.text2}>Kanye West</Text>
+              <Text style={styles.text2}>{user.username}</Text>
             </View>
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
               <Text style={styles.text1}>Address line</Text>
               <Text style={styles.text2}>{car.address}</Text>
-            </View>
-            <View
-              style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>
-              <Text style={styles.text1}>Email address</Text>
-              <Text style={styles.text2}>ye123@gmail.com</Text>
             </View>
             <View
               style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 10 }}>

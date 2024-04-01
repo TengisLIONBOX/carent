@@ -5,6 +5,7 @@ import { router, useGlobalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { ScrollView } from 'react-native-virtualized-view';
+
 import LoaderSkeleton from '../loading';
 
 const GET_CAR_BY_ID = gql`

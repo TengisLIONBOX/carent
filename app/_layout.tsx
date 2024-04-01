@@ -25,7 +25,7 @@ const InitialLayout: React.FC = () => {
 };
 
 const RootLayoutNav: React.FC = () => {
-  const BASE_URL = 'http://192.168.11.163:3000/api/graphql';
+  const BASE_URL = 'http://192.168.11.29:3000/api/graphql';
 
   const client = new ApolloClient({
     uri: BASE_URL,
