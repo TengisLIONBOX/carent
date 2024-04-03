@@ -256,6 +256,50 @@ export default function CreatepostScreen(): React.ReactNode {
             }}>
             {({ handleChange, handleBlur, values, setFieldValue }) => (
               <View style={{ gap: 20, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity onPress={pickImage1}>
+                  <Text style={styles.text1}>Front Car</Text>
+                  <View
+                    style={{
+                      width: 300,
+                      height: 130,
+                      backgroundColor: '#ECECEC',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: 10,
+                    }}>
+                    {image1 ? (
+                      <Image source={{ uri: image1.uri }} style={{ width: 200, height: 120 }} />
+                    ) : (
+                      <>
+                        <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
+                        <Text style={{ color: '#767676' }}>Add your photos here</Text>
+                      </>
+                    )}
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={pickImage2}>
+                  <Text style={styles.text1}>Back Car</Text>
+                  <View
+                    style={{
+                      width: 300,
+                      height: 130,
+                      backgroundColor: '#ECECEC',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: 10,
+                    }}>
+                    {image2 ? (
+                      <Image source={{ uri: image2.uri }} style={{ width: 200, height: 120 }} />
+                    ) : (
+                      <>
+                        <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
+                        <Text style={{ color: '#767676' }}>Add your photos here</Text>
+                      </>
+                    )}
+                  </View>
+                </TouchableOpacity>
                 <SafeAreaView>
                   <View>
                     <Text style={styles.text1}>Phone Number</Text>
@@ -370,12 +414,20 @@ export default function CreatepostScreen(): React.ReactNode {
                         }}
                         value={values.brand}
                         items={[
-                          { label: 'Ferrari', value: 'ferrari' },
+                          { label: 'Volkswagen', value: 'volkswagen' },
+                          { label: 'Tesla', value: 'tesla' },
+                          { label: 'Hyundai', value: 'hyundai' },
+                          { label: 'Audi', value: 'audi' },
+                          { label: 'Ford', value: 'ford' },
+                          { label: 'Mazda', value: 'mazda' },
+                          { label: 'Honda', value: 'honda' },
                           { label: 'Toyota', value: 'toyota' },
                           { label: 'Mercedes', value: 'mercedes' },
                           { label: 'BMW', value: 'bmw' },
                           { label: 'Geely', value: 'geely' },
                           { label: 'Lamborghini', value: 'lamborghini' },
+                          { label: 'Cadillac', value: 'cadillac' },
+                          { label: 'Chevrolet', value: 'chevrolet' },
                         ]}
                         style={{
                           inputAndroid: {
@@ -583,50 +635,6 @@ export default function CreatepostScreen(): React.ReactNode {
                     </View>
                   </View>
                 </SafeAreaView>
-                <TouchableOpacity onPress={pickImage1}>
-                  <Text style={styles.text1}>Front Car</Text>
-                  <View
-                    style={{
-                      width: 300,
-                      height: 130,
-                      backgroundColor: '#ECECEC',
-                      borderRadius: 15,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: 10,
-                    }}>
-                    {image1 ? (
-                      <Image source={{ uri: image1.uri }} style={{ width: 200, height: 120 }} />
-                    ) : (
-                      <>
-                        <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
-                        <Text style={{ color: '#767676' }}>Add your photos here</Text>
-                      </>
-                    )}
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={pickImage2}>
-                  <Text style={styles.text1}>Back Car</Text>
-                  <View
-                    style={{
-                      width: 300,
-                      height: 130,
-                      backgroundColor: '#ECECEC',
-                      borderRadius: 15,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: 10,
-                    }}>
-                    {image2 ? (
-                      <Image source={{ uri: image2.uri }} style={{ width: 200, height: 120 }} />
-                    ) : (
-                      <>
-                        <MaterialCommunityIcons name="camera-outline" size={32} color="#767676" />
-                        <Text style={{ color: '#767676' }}>Add your photos here</Text>
-                      </>
-                    )}
-                  </View>
-                </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => Submit(values)}>
                   <View

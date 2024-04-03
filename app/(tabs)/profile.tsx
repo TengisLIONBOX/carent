@@ -1,5 +1,5 @@
 import { useAuth, useUser } from '@clerk/clerk-expo';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -37,7 +37,7 @@ export default function TabTwoScreen(): React.ReactNode {
           <SafeAreaView
             style={{
               alignItems: 'center',
-              justifyContent: 'center',
+              marginTop: 180,
               flex: 1,
             }}>
             <View style={{ alignItems: 'center' }}>
@@ -120,9 +120,31 @@ export default function TabTwoScreen(): React.ReactNode {
               <AntDesign name="edit" size={20} color="white" />
             </TouchableOpacity>
           </Text>
-
-          <Text style={{ color: 'white', fontSize: 20, fontWeight: '500' }}>id: PIKI12897</Text>
         </LinearGradient>
+        <TouchableOpacity>
+          <View
+            style={{
+              backgroundColor: '#628CFF',
+              width: 300,
+              height: 70,
+              borderRadius: 15,
+              marginTop: 15,
+              justifyContent: 'center',
+              borderColor: '#1D5AFF',
+              borderWidth: 2,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 17,
+                fontWeight: '500',
+                marginLeft: 17,
+              }}>
+              <MaterialIcons name="car-rental" size={23} color="white" />
+              My Car Renter
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

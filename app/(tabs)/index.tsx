@@ -16,11 +16,12 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import { ScrollView } from 'react-native-virtualized-view';
 
+import { Audi } from '../icons/Audi';
 import { Bmw } from '../icons/Bmw';
+import { Hyundai } from '../icons/Hyundai';
 import { Mercedes } from '../icons/Mercedes';
-import { Tesla } from '../icons/Tesla';
-import { Bugatti } from '../icons/bugatti';
-import { Ferrari } from '../icons/ferrari';
+import { Toyota } from '../icons/Toyota';
+import { Volkswagen } from '../icons/Volkswagen';
 
 const GET_CAR_LIST = gql`
   query getCarList {
@@ -48,31 +49,42 @@ export default function TabOneScreen(): React.ReactNode {
   const category = [
     {
       id: '1',
-      name: 'Tesla',
-      img: <Tesla />,
+      name: 'Audi',
+      img: <Audi />,
+      brand: 'audi',
     },
     {
       id: '2',
       name: 'Mercedes',
       img: <Mercedes />,
+      brand: 'mercedes',
     },
     {
       id: '3',
-      name: 'Ferrari',
-      img: <Ferrari />,
+      name: 'Hyundai',
+      img: <Hyundai />,
+      brand: 'hyundai',
     },
     {
       id: '4',
-      name: 'Bugatti',
-      img: <Bugatti />,
+      name: 'Toyota',
+      img: <Toyota />,
+      brand: 'toyota',
     },
     {
       id: '5',
       name: 'BMW',
       img: <Bmw />,
+      brand: 'bmw',
+    },
+    {
+      id: '6',
+      name: 'Volkswagen',
+      img: <Volkswagen />,
+      brand: 'volkswagen`',
     },
   ];
-
+  const carList = data.getCarList.slice(0, 5);
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -117,7 +129,7 @@ export default function TabOneScreen(): React.ReactNode {
             showsHorizontalScrollIndicator={false}
             data={category}
             renderItem={({ item }) => (
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push(`/(public)/brandcars/${item.brand}`)}>
                 <View style={{ marginRight: 30, alignItems: 'center', gap: 5 }}>
                   {item.img}
                   <Text>{item.name}</Text>
@@ -138,7 +150,7 @@ export default function TabOneScreen(): React.ReactNode {
           </View>
           <View style={{ alignItems: 'center' }}>
             <FlatList
-              data={data.getCarList}
+              data={carList}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => router.push(`/carinfo/${item.id}`)}

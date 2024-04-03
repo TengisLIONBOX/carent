@@ -16,7 +16,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function LoginScreen(): React.ReactNode {
   const { signIn, setActive, isLoaded } = useSignIn();
-
   const [emailAddress, setEmailAddress] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [seepass, setSeepass] = useState(true);
@@ -28,24 +27,24 @@ export default function LoginScreen(): React.ReactNode {
     if (!isLoaded) {
       return;
     }
+
     setLoading(true);
+
     try {
-      const completeSignIn = await signIn.create({
+      const result = await signIn.create({
         identifier: emailAddress,
         password,
       });
 
-      await setActive({ session: completeSignIn.createdSessionId });
-    } catch (err) {
-      if (err instanceof Error) {
-        if (err.message === '') {
-          alert('This email hasn`t been registered!');
-        } else {
-          alert(err.message);
-        }
+      if (result.status === 'complete') {
+        console.log(result);
+        await setActive({ session: result.createdSessionId });
+        router.push('/');
       } else {
-        console.error(err);
+        console.log(result);
       }
+    } catch (err) {
+      alert(err.errors[0].longMessage);
     } finally {
       setLoading(false);
     }
@@ -54,9 +53,6 @@ export default function LoginScreen(): React.ReactNode {
   const SeePass = (): void => {
     return setSeepass(!seepass);
   };
-  // console.log('setActive:', setActive);
-  // console.log('Signin:', signIn);
-  // console.log('isLoaded:', isLoaded);
 
   return (
     <View style={styles.container}>

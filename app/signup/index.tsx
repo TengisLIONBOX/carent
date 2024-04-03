@@ -12,16 +12,14 @@ import {
   SafeAreaView,
   TextInput,
 } from 'react-native';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function SignUpScreen(): React.ReactNode {
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const { isLoaded, setActive, signUp } = useSignUp();
 
   const [username, setUsername] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [seepass, setSeepass] = useState(true);
-  const [loading, setLoading] = useState(false);
 
   const image = {
     uri: 'https://cdn.pixabay.com/photo/2016/04/01/11/10/automobile-1300231_1280.png',
@@ -31,29 +29,23 @@ export default function SignUpScreen(): React.ReactNode {
     if (!isLoaded) {
       return;
     }
-    setLoading(true);
+
     try {
-      const completeSignUp = await signUp.create({
+      await signUp.create({
         username,
         emailAddress,
         password,
       });
-      await setActive({ session: completeSignUp.createdSessionId });
 
-      console.log(completeSignUp);
-    } catch (err: unknown) {
-      alert(
-        'The password should be a minimum of 8 characters long and include at least one uppercase letter, and number. ',
-      );
-      if (err instanceof Error) {
-        if (err.message) {
-          alert(err.message);
-        } else {
-        }
-      } else {
+      if (signUp.status !== 'complete') {
+        console.log(JSON.stringify(signUp, null, 2));
       }
-    } finally {
-      setLoading(false);
+      if (signUp.status === 'complete') {
+        await setActive({ session: signUp.createdSessionId });
+        router.push('/');
+      }
+    } catch (err) {
+      alert(err.errors[0].longMessage);
     }
   };
 
@@ -63,7 +55,6 @@ export default function SignUpScreen(): React.ReactNode {
 
   return (
     <View style={styles.container}>
-      <Spinner visible={loading} />
       <Image
         source={image}
         resizeMode="cover"

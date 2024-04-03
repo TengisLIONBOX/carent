@@ -1,5 +1,7 @@
-import { gql, useLazyQuery } from '@apollo/client';
-import { useGlobalSearchParams } from 'expo-router';
+import { gql, useLazyQuery, useMutation } from '@apollo/client';
+import { FontAwesome } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { router, useGlobalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -29,6 +31,30 @@ const GET_USER_BY_ID = gql`
   }
 `;
 
+const UPDATE_CAR = gql`
+  mutation UpdateCar($input: CarUpdateInput!) {
+    updateCar(input: $input) {
+      id
+      rented
+      rentedId
+      rentedAt
+    }
+  }
+`;
+
+const GET_CAR_LIST = gql`
+  query GetCarList {
+    getCarList {
+      id
+      name
+      price
+      description
+      frontimg
+      rented
+    }
+  }
+`;
+
 interface Car {
   id: string;
   name: string;
@@ -47,19 +73,23 @@ interface User {
 
 export default function CheckoutScreen(): React.ReactNode {
   const [days, setDays] = useState('');
+  const [success, setSuccess] = useState(false);
   const [totalprice, setTotal] = useState('');
   const { id } = useGlobalSearchParams();
   const [getCarById, { loading: carLoading, error, data: carData }] = useLazyQuery(GET_CAR_BY_ID);
   const [getUserById, { loading: userLoading, data: userData }] = useLazyQuery(GET_USER_BY_ID);
+  const [updateCar] = useMutation(UPDATE_CAR, {
+    refetchQueries: [{ query: GET_CAR_LIST }],
+  });
   const [car, setCar] = useState<Car | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     getCarById({ variables: { id } });
   }, [id]);
+
   useEffect(() => {
     if (car !== null) {
-      // console.log('Calling get User by id ', car.renterId);
       getUserById({ variables: { id: car.renterId } });
     }
   }, [car]);
@@ -71,7 +101,6 @@ export default function CheckoutScreen(): React.ReactNode {
   }, [carData]);
 
   useEffect(() => {
-    // console.log(JSON.stringify({ userData }, null, 2));
     if (userData !== undefined) {
       setUser(userData.getUserById);
     }
@@ -83,13 +112,61 @@ export default function CheckoutScreen(): React.ReactNode {
       setTotal(String(dayprice + 8));
     }
   }, [car, days]);
-  console.log(JSON.stringify({ car, user }, null, 2));
 
   if (car === null || user === null || carLoading || userLoading) return <Spinner visible />;
   if (error) return <Text>{error?.message}</Text>;
 
+  const handleBuy = async () => {
+    try {
+      await updateCar({
+        variables: {
+          input: {
+            id: car.id,
+            rented: true,
+            rentedId: user.id,
+            rentedAt: new Date().toISOString(),
+          },
+        },
+      });
+      setSuccess(true);
+    } catch (error) {
+      console.error('Error updating car:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
+      {success && (
+        <BlurView
+          intensity={50}
+          tint="dark"
+          style={{
+            width: '100%',
+            height: '110%',
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10,
+          }}>
+          <TouchableOpacity onPress={() => router.push('/')}>
+            <View
+              style={{
+                width: 250,
+                height: 220,
+                backgroundColor: 'white',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 15,
+                padding: 10,
+              }}>
+              <FontAwesome name="check-circle" size={45} color="green" />
+              <Text style={{ fontWeight: '700', fontSize: 20, marginTop: 10 }}>
+                Successfully rented
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </BlurView>
+      )}
       <View style={{ padding: 20 }}>
         <Text
           style={{
@@ -206,7 +283,7 @@ export default function CheckoutScreen(): React.ReactNode {
               <Text style={{ fontSize: 18, fontWeight: '600' }}>${totalprice}</Text>
             </View>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleBuy}>
             <View
               style={{
                 width: '100%',

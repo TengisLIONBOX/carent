@@ -125,7 +125,9 @@ export default function CarInfoScreen(): React.ReactNode {
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Car Color</Text>
-              <Text style={styles.features_text2}>{car.color}</Text>
+              <Text style={{ fontSize: 16, fontWeight: '500', color: `${car.color}` }}>
+                {car.color}
+              </Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 23 }}>
