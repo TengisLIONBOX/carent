@@ -93,6 +93,14 @@ const PublicLayout: React.FC = () => {
             headerTransparent: true,
           }}
         />
+        <Stack.Screen
+          name="renter/index"
+          options={{
+            headerTitle: '',
+            headerShown: false,
+            headerTransparent: true,
+          }}
+        />
       </Stack>
     </View>
   );

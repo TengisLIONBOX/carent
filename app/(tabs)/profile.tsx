@@ -3,6 +3,7 @@ import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -121,7 +122,7 @@ export default function TabTwoScreen(): React.ReactNode {
             </TouchableOpacity>
           </Text>
         </LinearGradient>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/(public)/renter')}>
           <View
             style={{
               backgroundColor: '#628CFF',

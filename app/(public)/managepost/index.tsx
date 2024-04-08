@@ -119,7 +119,13 @@ export default function AdmincarsScreen(): React.ReactNode {
     });
     setConfirmation(false);
   };
-
+  if (data?.getCarsByUser.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 17, fontWeight: '600' }}>You have no post!</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       {confirmation ? (

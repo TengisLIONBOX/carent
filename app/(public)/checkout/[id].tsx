@@ -1,9 +1,18 @@
 import { gql, useLazyQuery, useMutation } from '@apollo/client';
+import { useUser } from '@clerk/clerk-expo';
 import { FontAwesome } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { router, useGlobalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  SafeAreaView,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -38,6 +47,7 @@ const UPDATE_CAR = gql`
       rented
       rentedId
       rentedAt
+      daysRented
     }
   }
 `;
@@ -51,6 +61,24 @@ const GET_CAR_LIST = gql`
       description
       frontimg
       rented
+    }
+  }
+`;
+
+const GET_RENTED_CARS = gql`
+  query GetRentedCars($renterId: String) {
+    getRentedCars(renterId: $renterId) {
+      id
+      name
+      price
+      color
+      frontimg
+      brand
+      renterId
+      rented
+      rentedId
+      rentedAt
+      renterPhone
     }
   }
 `;
@@ -74,15 +102,28 @@ interface User {
 export default function CheckoutScreen(): React.ReactNode {
   const [days, setDays] = useState('');
   const [success, setSuccess] = useState(false);
+  const [getPhone, setGetPhone] = useState(false);
+  const [phone, setPhone] = useState('');
   const [totalprice, setTotal] = useState('');
   const { id } = useGlobalSearchParams();
+  const { isLoaded, isSignedIn, user } = useUser();
+
   const [getCarById, { loading: carLoading, error, data: carData }] = useLazyQuery(GET_CAR_BY_ID);
   const [getUserById, { loading: userLoading, data: userData }] = useLazyQuery(GET_USER_BY_ID);
   const [updateCar] = useMutation(UPDATE_CAR, {
-    refetchQueries: [{ query: GET_CAR_LIST }],
+    refetchQueries: [
+      { query: GET_CAR_LIST },
+      {
+        query: GET_RENTED_CARS,
+        variables: {
+          renterId: user?.id,
+        },
+      },
+    ],
   });
+
   const [car, setCar] = useState<Car | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user1, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     getCarById({ variables: { id } });
@@ -113,9 +154,18 @@ export default function CheckoutScreen(): React.ReactNode {
     }
   }, [car, days]);
 
-  if (car === null || user === null || carLoading || userLoading) return <Spinner visible />;
+  if (car === null || user1 === null || carLoading || userLoading) return <Spinner visible />;
   if (error) return <Text>{error?.message}</Text>;
 
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+  const day = ('0' + currentDate.getDate()).slice(-2);
+  const hour = ('0' + currentDate.getHours()).slice(-2);
+  const minute = ('0' + currentDate.getMinutes()).slice(-2);
+  if (!isLoaded || !isSignedIn) {
+    return null;
+  }
   const handleBuy = async () => {
     try {
       await updateCar({
@@ -124,14 +174,21 @@ export default function CheckoutScreen(): React.ReactNode {
             id: car.id,
             rented: true,
             rentedId: user.id,
-            rentedAt: new Date().toISOString(),
+            rentedAt: `${year}-${month}-${day} ${hour}:${minute}`,
+            daysRented: days,
+            renterPhone: phone,
           },
         },
       });
+      setGetPhone(false);
       setSuccess(true);
     } catch (error) {
       console.error('Error updating car:', error);
     }
+  };
+  const PhoneNumberGetter = () => {
+    setGetPhone(!getPhone);
+    setPhone('');
   };
 
   return (
@@ -166,6 +223,68 @@ export default function CheckoutScreen(): React.ReactNode {
             </View>
           </TouchableOpacity>
         </BlurView>
+      )}
+
+      {getPhone ? (
+        <BlurView
+          intensity={50}
+          tint="dark"
+          style={{
+            width: '100%',
+            height: '110%',
+            position: 'absolute',
+            zIndex: 10,
+          }}>
+          <SafeAreaView
+            style={{
+              alignItems: 'center',
+              marginTop: 180,
+              flex: 1,
+            }}>
+            <View style={{ alignItems: 'center' }}>
+              <View style={styles.searchContainer}>
+                <TextInput
+                  keyboardType="numeric"
+                  style={styles.input}
+                  value={phone}
+                  onChangeText={(value) => setPhone(value)}
+                  placeholder="Phone Number"
+                  placeholderTextColor="#3B3B3B"
+                />
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row', marginTop: 10, gap: 7 }}>
+              <TouchableOpacity onPress={PhoneNumberGetter}>
+                <View
+                  style={{
+                    width: 130,
+                    height: 62,
+                    backgroundColor: '#DE0000',
+                    borderRadius: 15,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{ color: 'white', fontWeight: '700' }}>Cancel</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleBuy}>
+                <View
+                  style={{
+                    width: 130,
+                    height: 62,
+                    backgroundColor: '#003D82',
+                    borderRadius: 15,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{ color: 'white', fontWeight: '700' }}>Buy</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </BlurView>
+      ) : (
+        <></>
       )}
       <View style={{ padding: 20 }}>
         <Text
@@ -283,7 +402,7 @@ export default function CheckoutScreen(): React.ReactNode {
               <Text style={{ fontSize: 18, fontWeight: '600' }}>${totalprice}</Text>
             </View>
           </View>
-          <TouchableOpacity onPress={handleBuy}>
+          <TouchableOpacity onPress={PhoneNumberGetter}>
             <View
               style={{
                 width: '100%',
@@ -320,5 +439,21 @@ const styles = StyleSheet.create({
   text2: {
     fontSize: 15,
     fontWeight: '500',
+  },
+  input: {
+    width: 300,
+    height: 55,
+    borderWidth: 1,
+    borderRadius: 15,
+    backgroundColor: '#D5D5D5',
+    borderColor: '#263259',
+    color: 'black',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

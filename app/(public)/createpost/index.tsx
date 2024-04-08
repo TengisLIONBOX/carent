@@ -142,6 +142,10 @@ export default function CreatepostScreen(): React.ReactNode {
           price: Number(price),
           renterId: String(user.id),
           rented: false,
+          rentedId: '',
+          rentedAt: '',
+          daysRented: '',
+          renterPhone: '',
         },
       },
     });
