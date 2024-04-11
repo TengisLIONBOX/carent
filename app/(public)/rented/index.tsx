@@ -1,7 +1,7 @@
 import { gql, useLazyQuery } from '@apollo/client';
-import { router, useGlobalSearchParams } from 'expo-router';
+import { useUser } from '@clerk/clerk-expo';
 import { useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { ScrollView } from 'react-native-virtualized-view';
 
@@ -10,57 +10,91 @@ interface Car {
   name: string;
   price: number;
   frontimg: string;
+  color: string;
+  brand: string;
+  renterId: string;
+  rented: boolean;
+  rentedId: string;
+  rentedAt: string;
+  daysRented: string;
+  phone: string;
 }
 
-interface GetCarsByBrandData {
-  getCarsByBrand: Car[];
+interface GetMyRentedCars {
+  getMyRentedCars: Car[];
 }
 
-const GET_CARS_BY_BRAND = gql`
-  query getCarsByBrand($brand: String!) {
-    getCarsByBrand(brand: $brand) {
+const GET_MY_RENTED_CARS = gql`
+  query GetMyRentedCars($rentedId: String!) {
+    getMyRentedCars(rentedId: $rentedId) {
       id
       name
       price
+      color
       frontimg
+      brand
+      renterId
+      rented
+      rentedId
+      rentedAt
+      daysRented
+      phone
     }
   }
 `;
 
-export default function BrandCarsScreen(): JSX.Element {
-  const { brand } = useGlobalSearchParams();
-  const [getCarsByBrand, { data, loading, error }] =
-    useLazyQuery<GetCarsByBrandData>(GET_CARS_BY_BRAND);
+export default function MyRentedCarsScreen(): React.ReactNode {
+  const [getMyRentedCars, { data, loading, error }] =
+    useLazyQuery<GetMyRentedCars>(GET_MY_RENTED_CARS);
+
+  const { isLoaded, isSignedIn, user } = useUser();
 
   useEffect(() => {
-    getCarsByBrand({
-      variables: {
-        brand,
-      },
-    });
-  }, [getCarsByBrand, brand]);
+    if (user) {
+      console.log('user exists');
+      getMyRentedCars({
+        variables: {
+          rentedId: user.id,
+        },
+        onCompleted: (data) => {
+          console.log('RENTED CARS:');
+          console.log(JSON.stringify(data, null, 2));
+        },
+        onError: (error) => {
+          console.log(JSON.stringify(error, null, 2));
+        },
+      });
+    }
+  }, [getMyRentedCars, user]);
 
+  if (!isLoaded || !isSignedIn) {
+    return null;
+  }
+
+  console.log({ loading, data });
   if (loading || !data) return <Spinner visible />;
   if (error) return <Text>{error.message}...</Text>;
+  console.log(user.id);
 
-  if (data.getCarsByBrand.length === 0) {
+  console.log(data);
+
+  if (data.getMyRentedCars.length === 0) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 17, fontWeight: '600' }}>This Brand is Empty 😔</Text>
+        <Text style={{ fontSize: 17, fontWeight: '600' }}>You don't have any rented cars!</Text>
       </View>
     );
   }
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 50 }}>
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <FlatList
-              data={data?.getCarsByBrand ?? []}
+              data={data.getMyRentedCars}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => router.push(`/carinfo/${item.id}`)}
-                  style={{ marginBottom: 20 }}>
+                <View style={{ marginBottom: 20 }}>
                   <View style={styles.item}>
                     <View style={{ alignItems: 'center' }}>
                       <Image style={styles.image} source={{ uri: item.frontimg }} />
@@ -78,9 +112,13 @@ export default function BrandCarsScreen(): JSX.Element {
                         }}>
                         ${item.price} / day
                       </Text>
+                      <Text>Brand: {item.brand}</Text>
+                      <Text>Rented At: {item.rentedAt}</Text>
+                      <Text>Days Rented: {item.daysRented}</Text>
+                      <Text>Renter Phone Number: {item.phone}</Text>
                     </View>
                   </View>
-                </TouchableOpacity>
+                </View>
               )}
               keyExtractor={(item) => item.id}
             />

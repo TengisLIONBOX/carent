@@ -51,22 +51,53 @@ const CREATE_CAR = gql`
     }
   }
 `;
-
+const GET_CARS_BY_USER = gql`
+  query GetCarsByUser($renterId: String) {
+    getCarsByUser(renterId: $renterId) {
+      id
+      name
+      description
+      price
+      frontimg
+      backimg
+    }
+  }
+`;
+const GET_CARS_BY_BRAND = gql`
+  query getCarsByBrand($brand: String!) {
+    getCarsByBrand(brand: $brand) {
+      id
+      name
+      price
+      frontimg
+    }
+  }
+`;
 export default function CreatepostScreen(): React.ReactNode {
   const [image1, setImage1] = useState<ImagePicker.ImagePickerAsset | undefined>();
   const [image2, setImage2] = useState<ImagePicker.ImagePickerAsset | undefined>();
+  const [imgUrl1, setImgUrl1] = useState('');
+  const [imgUrl2, setImgUrl2] = useState('');
   const [success, setSuccess] = useState(false);
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
-  const [createCar] = useMutation(CREATE_CAR, {
-    refetchQueries: [{ query: GET_CAR_LIST }],
-  });
   const { isLoaded, isSignedIn, user } = useUser();
+  const [createCar] = useMutation(CREATE_CAR, {
+    refetchQueries: [
+      { query: GET_CAR_LIST },
+      {
+        query: GET_CARS_BY_USER,
+        variables: {
+          renterId: user?.id,
+        },
+      },
+      { query: GET_CARS_BY_BRAND },
+    ],
+  });
+
   if (!isLoaded || !isSignedIn) {
     return null;
   }
 
-  const frontImgUrl = image1?.uri ?? '';
-  const backImgUrl = image2?.uri ?? '';
   interface FormValues {
     name: string;
     address: string;
@@ -83,6 +114,83 @@ export default function CreatepostScreen(): React.ReactNode {
     phone: string;
     price: string;
   }
+  const pickImage1 = async (): Promise<void> => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const image = result.assets[0];
+      setImage1(image);
+
+      if (image !== null && image !== undefined) {
+        const data = new FormData();
+        //@ts-ignore
+        data.append('file', {
+          name: 'image',
+          type: 'image/jpeg',
+          uri: image.uri,
+        });
+
+        fetch(`https://graphql-iota-ivory.vercel.app/api/file/upload`, {
+          method: 'POST',
+          body: data,
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            console.log('response', response);
+            setImgUrl1(response.url);
+            console.log(response.secure_url);
+          })
+          .catch((error: unknown) => {
+            console.error('Error uploading image:', error);
+          });
+      }
+    }
+  };
+
+  const pickImage2 = async (): Promise<void> => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const image = result.assets[0];
+      setImage2(image);
+
+      if (image !== null && image !== undefined) {
+        const data = new FormData();
+        //@ts-ignore
+        data.append('file', {
+          name: 'image',
+          type: 'image/jpeg',
+          uri: image.uri,
+        });
+
+        fetch(`https://graphql-iota-ivory.vercel.app/api/file/upload`, {
+          method: 'POST',
+          body: data,
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            console.log('response', response);
+            setImgUrl2(response.url);
+            console.log(response.secure_url);
+          })
+          .catch((error: unknown) => {
+            console.error('Error uploading image:', error);
+          });
+      }
+    }
+  };
+  console.log('========', imgUrl2);
+
   const Submit = (values: FormValues) => {
     const {
       name,
@@ -117,7 +225,7 @@ export default function CreatepostScreen(): React.ReactNode {
       !phone ||
       !price
     ) {
-      console.log('Please fill in all the required fields.');
+      alert('Please fill in all the required fields.');
       return;
     }
 
@@ -135,8 +243,8 @@ export default function CreatepostScreen(): React.ReactNode {
           seats: Number(seats),
           fuel: String(fuel),
           engine: Number(engine),
-          frontimg: frontImgUrl,
-          backimg: backImgUrl,
+          frontimg: imgUrl1,
+          backimg: imgUrl2,
           description: String(description),
           phone: Number(phone),
           price: Number(price),
@@ -162,36 +270,14 @@ export default function CreatepostScreen(): React.ReactNode {
     );
   }
 
-  const pickImage1 = async (): Promise<void> => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage1(result.assets[0]);
-    }
-  };
-
-  const pickImage2 = async (): Promise<void> => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage2(result.assets[0]);
-    }
-  };
-
   const amjilttai = () => {
     setSuccess(!success);
     router.push('/');
   };
+
+  console.log('image1', imgUrl1);
+  console.log('image2', imgUrl2);
+
   return (
     <View style={styles.container}>
       {success ? (
@@ -535,6 +621,7 @@ export default function CreatepostScreen(): React.ReactNode {
                         items={[
                           { label: 'Manual', value: 'manual' },
                           { label: 'Automatic', value: 'automatic' },
+                          { label: 'Hybrid', value: 'hybrid' },
                         ]}
                         style={{
                           inputAndroid: {

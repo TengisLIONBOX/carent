@@ -78,11 +78,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   item: {
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F8F8F8',
     borderRadius: 20,
     width: 330,
     borderWidth: 1,
-    borderColor: '#F3F3F3',
+    borderColor: '#EFEFEF',
   },
   image: {
     width: 328,

@@ -98,7 +98,24 @@ interface User {
   id: string;
   username: string;
 }
-
+const GET_MY_RENTED_CARS = gql`
+  query GetMyRentedCars($rentedId: String!) {
+    getMyRentedCars(rentedId: $rentedId) {
+      id
+      name
+      price
+      color
+      frontimg
+      brand
+      renterId
+      rented
+      rentedId
+      rentedAt
+      daysRented
+      phone
+    }
+  }
+`;
 export default function CheckoutScreen(): React.ReactNode {
   const [days, setDays] = useState('');
   const [success, setSuccess] = useState(false);
@@ -117,6 +134,12 @@ export default function CheckoutScreen(): React.ReactNode {
         query: GET_RENTED_CARS,
         variables: {
           renterId: user?.id,
+        },
+      },
+      {
+        query: GET_MY_RENTED_CARS,
+        variables: {
+          rentedId: user?.id,
         },
       },
     ],
@@ -167,28 +190,32 @@ export default function CheckoutScreen(): React.ReactNode {
     return null;
   }
   const handleBuy = async () => {
-    try {
-      await updateCar({
-        variables: {
-          input: {
-            id: car.id,
-            rented: true,
-            rentedId: user.id,
-            rentedAt: `${year}-${month}-${day} ${hour}:${minute}`,
-            daysRented: days,
-            renterPhone: phone,
+    if (phone !== '') {
+      try {
+        await updateCar({
+          variables: {
+            input: {
+              id: car.id,
+              rented: true,
+              rentedId: user.id,
+              rentedAt: `${year}-${month}-${day} ${hour}:${minute}`,
+              daysRented: days,
+              renterPhone: phone,
+            },
           },
-        },
-      });
-      setGetPhone(false);
-      setSuccess(true);
-    } catch (error) {
-      console.error('Error updating car:', error);
+        });
+        setGetPhone(false);
+        setSuccess(true);
+      } catch (error) {
+        console.error('Error updating car:', error);
+      }
     }
   };
   const PhoneNumberGetter = () => {
-    setGetPhone(!getPhone);
-    setPhone('');
+    if (days !== '') {
+      setGetPhone(!getPhone);
+      setPhone('');
+    }
   };
 
   return (

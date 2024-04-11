@@ -58,7 +58,13 @@ export default function CarInfoScreen(): React.ReactNode {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 23, fontWeight: '500' }}>{car.name}</Text>
+          <Text
+            style={{
+              fontSize: 23,
+              fontWeight: '500',
+            }}>
+            {car.name}
+          </Text>
           <PageSlider
             style={{ width: 380 }}
             selectedPage={selectedPage}
@@ -125,7 +131,18 @@ export default function CarInfoScreen(): React.ReactNode {
             </View>
             <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
               <Text style={styles.features_text}>Car Color</Text>
-              <Text style={{ fontSize: 16, fontWeight: '500', color: `${car.color}` }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '500',
+                  color: `${car.color}`,
+                  textShadowColor: 'black',
+                  textShadowRadius: 4,
+                  textShadowOffset: {
+                    width: 1,
+                    height: 1,
+                  },
+                }}>
                 {car.color}
               </Text>
             </View>

@@ -66,7 +66,24 @@ const GET_CAR_LIST = gql`
     }
   }
 `;
-
+const GET_MY_RENTED_CARS = gql`
+  query GetMyRentedCars($rentedId: String!) {
+    getMyRentedCars(rentedId: $rentedId) {
+      id
+      name
+      price
+      color
+      frontimg
+      brand
+      renterId
+      rented
+      rentedId
+      rentedAt
+      daysRented
+      phone
+    }
+  }
+`;
 export default function RenterCarsScreen(): React.ReactNode {
   const [getRentedCars, { data, loading, error }] = useLazyQuery<GetRentedCars>(GET_RENTED_CARS);
 
@@ -79,6 +96,12 @@ export default function RenterCarsScreen(): React.ReactNode {
         query: GET_RENTED_CARS,
         variables: {
           renterId: user?.id,
+        },
+      },
+      {
+        query: GET_MY_RENTED_CARS,
+        variables: {
+          rentedId: user?.id,
         },
       },
     ],
@@ -201,11 +224,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   item: {
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F8F8F8',
     borderRadius: 20,
     width: 330,
     borderWidth: 1,
-    borderColor: '#F3F3F3',
+    borderColor: '#EFEFEF',
   },
   image: {
     width: 328,

@@ -90,14 +90,16 @@ export default function TabTwoScreen(): React.ReactNode {
         <TouchableOpacity onPress={doLogout}>
           <View
             style={{
-              width: 80,
+              width: 100,
               height: 50,
               borderRadius: 13,
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor: 'red',
+              flexDirection: 'row',
             }}>
             <Text style={{ fontSize: 17, fontWeight: 'bold', color: 'white' }}>Logout</Text>
+            <MaterialIcons name="logout" size={20} color="white" />
           </View>
         </TouchableOpacity>
       </View>
@@ -142,7 +144,31 @@ export default function TabTwoScreen(): React.ReactNode {
                 marginLeft: 17,
               }}>
               <MaterialIcons name="car-rental" size={23} color="white" />
-              My Car Renter
+              My Car Renters
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/(public)/rented')}>
+          <View
+            style={{
+              backgroundColor: '#628CFF',
+              width: 300,
+              height: 70,
+              borderRadius: 15,
+              marginTop: 10,
+              justifyContent: 'center',
+              borderColor: '#1D5AFF',
+              borderWidth: 2,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 17,
+                fontWeight: '500',
+                marginLeft: 17,
+              }}>
+              <MaterialIcons name="directions-car" size={20} color="white" />
+              My Rented Cars
             </Text>
           </View>
         </TouchableOpacity>
